@@ -22,24 +22,48 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-class MyViewHolder extends RecyclerView.ViewHolder {
-    public MyViewHolder(View v) {
-        super(v);
-    }
-
-    public View getParentView()  {
-        return super.itemView;
-    }
-}
-
-
 interface OnClickItem {
     void OnClickItem(int itemIndex);
     void OnLongClickItem(int itemIndex);
 }
 
+class MyViewHolder extends RecyclerView.ViewHolder {
+    public MyViewHolder(View v) {
+        super(v);
+    }
+
+    public void setDate(long date) {
+        TextView dateView = this.itemView.findViewById(R.id.itemDate);
+        dateView.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(new Date(date)));
+    }
+
+    public void setTitle(String title) {
+        TextView textView = this.itemView.findViewById(R.id.itemText);
+        textView.setText(title);
+    }
+
+    public void setListeners(final OnClickItem onClick, final int itemIndex)
+    {
+        this.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClick.OnClickItem(itemIndex);
+            }
+        });
+
+        this.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onClick.OnLongClickItem(itemIndex);
+                return false;
+            }
+        });
+
+    }
+
+}
+
 class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
-    private String TAG = "MyAdapter";
     private ArrayList<Task> tasks;
     private OnClickItem onClickItem;
 
@@ -58,27 +82,9 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder viewHolder, final int i) {
-        TextView textView = viewHolder.itemView.findViewById(R.id.itemText);
-        textView.setText(tasks.get(i).getTitle());
-        Date date = new Date(tasks.get(i).getDate());
-        TextView dateView = viewHolder.itemView.findViewById(R.id.itemDate);
-        dateView.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(date));
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyAdapter.this.onClickItem.OnClickItem(i);
-            }
-        });
-
-        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Log.d("TOTO", "onLongClick called");
-                MyAdapter.this.onClickItem.OnLongClickItem(i);
-                return false;
-            }
-        });
-
+        viewHolder.setTitle(tasks.get(i).getTitle());
+        viewHolder.setDate(tasks.get(i).getDate());
+        viewHolder.setListeners(MyAdapter.this.onClickItem, i);
     }
 
     @Override
@@ -115,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         ((View) newButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("LOLO", "button pressed");
                 Toast.makeText(MainActivity.this, "new button pressed", 3).show();
                 Intent intent = new Intent(MainActivity.this, NewTask.class);
                 startActivityForResult(intent, 1);
@@ -131,22 +136,18 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     public void OnLongClickItem(final int itemIndex) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this)
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("LOLO", "yes pressed");
-                tasks.remove(itemIndex);
-                adapter.notifyDataSetChanged();
+                deleteTask(itemIndex);
             }
         }). setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.d("LOLO", "No pressed");
-            }
+            public void onClick(DialogInterface dialog, int which) { }
         })
-                .setMessage("Delete Task?")
-                .create().show();
+        .setMessage("Delete Task?")
+        .create().show();
     }
 
     @Override
@@ -155,11 +156,18 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         if (resultCode == RESULT_CANCELED)
             return ;
         String title = data.getExtras().getString("title");
+        addTask(title);
+    }
+
+    private void addTask(String title) {
         long date = new Date().getTime();
-        Log.d("LOLO", DateFormat.getDateInstance(DateFormat.SHORT).format(date));
         Toast.makeText(MainActivity.this, "task added", 3).show();
         tasks.add(new Task(title, date));
         adapter.notifyDataSetChanged();
+    }
 
+    private void deleteTask(int itemIndex) {
+        tasks.remove(itemIndex);
+        adapter.notifyDataSetChanged();
     }
 }
