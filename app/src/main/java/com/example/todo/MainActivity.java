@@ -76,8 +76,7 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false);
-        MyViewHolder viewHolder = new MyViewHolder(v);
-        return viewHolder;
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -137,16 +136,16 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
 
     public void OnLongClickItem(final int itemIndex) {
         new AlertDialog.Builder(this)
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteTask(itemIndex);
             }
-        }). setNegativeButton("No", new DialogInterface.OnClickListener() {
+        }). setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) { }
         })
-        .setMessage("Delete Task?")
+        .setMessage(R.string.delete_task_confirm)
         .create().show();
     }
 

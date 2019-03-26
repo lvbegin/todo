@@ -71,7 +71,7 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(1)));
 
         onView(withId(R.id.itemLayout)).perform(longClick());
-        onView(withText("Yes")).perform(click());
+        onView(withText(R.string.yes)).perform(click());
 
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(0)));
     }
