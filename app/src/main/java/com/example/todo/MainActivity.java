@@ -1,6 +1,7 @@
 package com.example.todo;
 
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +17,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 interface OnClickItem {
@@ -34,12 +33,12 @@ class MyViewHolder extends RecyclerView.ViewHolder {
 
     public void setDate(long date) {
         TextView dateView = this.itemView.findViewById(R.id.itemDate);
-        dateView.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(new Date(date)));
+        dateView.setText(ViewFormating.dateToString(date));
     }
 
     public void setTitle(String title) {
         TextView textView = this.itemView.findViewById(R.id.itemText);
-        textView.setText(title);
+        textView.setText(ViewFormating.TitleToDisplayTruncated(title));
     }
 
     public void setListeners(final OnClickItem onClick, final int itemIndex)
@@ -58,16 +57,14 @@ class MyViewHolder extends RecyclerView.ViewHolder {
                 return false;
             }
         });
-
     }
-
 }
 
 class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
-    private ArrayList<Task> tasks;
+    private List<TaskE> tasks;
     private OnClickItem onClickItem;
 
-    public MyAdapter(ArrayList<Task> tasks, OnClickItem onClickItem) {
+    public MyAdapter(List<TaskE> tasks, OnClickItem onClickItem) {
         super();
         this.tasks = tasks;
         this.onClickItem = onClickItem;
@@ -81,8 +78,8 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder viewHolder, final int i) {
-        viewHolder.setTitle(tasks.get(i).getTitle());
-        viewHolder.setDate(tasks.get(i).getDate());
+        viewHolder.setTitle(tasks.get(i).title);
+        viewHolder.setDate(tasks.get(i).creationDate);
         viewHolder.setListeners(MyAdapter.this.onClickItem, i);
     }
 
@@ -97,21 +94,23 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 }
 
-
 public class MainActivity extends AppCompatActivity implements OnClickItem {
 
     private RecyclerView listToDo;
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+    List<TaskE> tasks = null;
     private Button newButton;
     private MyAdapter adapter;
-
+    private TaskDB db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = Room.databaseBuilder(getApplicationContext(), TaskDB.class, "tododb").allowMainThreadQueries().build();
+        tasks = db.TaskDAO().getAll();
+
         adapter = new MyAdapter(tasks, this);
         listToDo = (RecyclerView)findViewById(R.id.listtodo);
-        listToDo.setHasFixedSize(true);
         listToDo.setLayoutManager(new LinearLayoutManager(this));
         listToDo.setAdapter( adapter);
         listToDo.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -128,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     public void OnClickItem(int itemIndex) {
-        Task t = MainActivity.this.tasks.get(itemIndex);
+        TaskE t = MainActivity.this.tasks.get(itemIndex);
         Intent i = new Intent(this, viewTask.class);
-        i.putExtra("task", t.getTitle());
+        i.putExtra("task", t.title);
         startActivity(i);
     }
 
@@ -161,11 +160,13 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     private void addTask(String title) {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
-        tasks.add(new Task(title, date));
+        tasks.add(new TaskE(title, date));
+        db.TaskDAO().insert(new TaskE(title, date));
         adapter.notifyDataSetChanged();
     }
 
     private void deleteTask(int itemIndex) {
+        db.TaskDAO().delete(tasks.get(itemIndex));
         tasks.remove(itemIndex);
         adapter.notifyDataSetChanged();
     }

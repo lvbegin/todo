@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.todo.Task;
-
 public class viewTask extends AppCompatActivity {
     private TextView titleView;
 

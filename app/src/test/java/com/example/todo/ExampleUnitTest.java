@@ -11,11 +11,15 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void can_retreive_task_title() {
-        String title = new String("this is a title");
-        long date = 99009900;
-        Task t = new Task(title, date);
-        assertEquals(title, t.getTitle());
-        assertEquals(date, t.getDate());
+    public void date_formatted_correctly() {
+        long date = 891119878;
+        assertEquals("11/01/70", ViewFormating.dateToString(date));
+    }
+
+    @Test
+    public void title_too_long_is_truncated() {
+        final String title = "This is a too long title";
+        final String formattedtitle = "This is a too long t...";
+        assertEquals(formattedtitle, ViewFormating.TitleToDisplayTruncated(title));
     }
 }
