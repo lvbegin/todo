@@ -1,8 +1,5 @@
 package com.example.todo;
 
-import android.app.AlertDialog;
-import android.arch.persistence.room.Room;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import java.util.List;
 
 interface OnClickItem {
     void OnClickItem(int itemIndex);
-    void OnLongClickItem(int itemIndex);
 }
 
 class MyViewHolder extends RecyclerView.ViewHolder {
@@ -47,14 +45,6 @@ class MyViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 onClick.OnClickItem(itemIndex);
-            }
-        });
-
-        this.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onClick.OnLongClickItem(itemIndex);
-                return false;
             }
         });
     }
@@ -97,19 +87,18 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 public class MainActivity extends AppCompatActivity implements OnClickItem {
 
     private RecyclerView listToDo;
-    List<TaskE> tasks = null;
     private Button newButton;
     private MyAdapter adapter;
-    private TaskDB db;
+    private PersistentTaskList list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = Room.databaseBuilder(getApplicationContext(), TaskDB.class, "tododb").allowMainThreadQueries().build();
-        tasks = db.TaskDAO().getAll();
+        list = new PersistentTaskList("tododb", getApplicationContext());
 
-        adapter = new MyAdapter(tasks, this);
+        adapter = new MyAdapter(list.getList(), this);
         listToDo = (RecyclerView)findViewById(R.id.listtodo);
         listToDo.setLayoutManager(new LinearLayoutManager(this));
         listToDo.setAdapter( adapter);
@@ -124,28 +113,51 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
                 startActivityForResult(intent, 1);
             }
         });
+
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                Log.d("LOLO", "getMovementFlags");
+                int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                Log.d("LOLO", "onMove callback called");
+                list.swap(viewHolder.getAdapterPosition(), viewHolder1.getAdapterPosition());
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), viewHolder1.getAdapterPosition());
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                Log.d("LOLO", "onSwiped");
+                int position = viewHolder.getAdapterPosition();
+                list.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+        });
+        helper.attachToRecyclerView(listToDo);
     }
 
+    @Override
     public void OnClickItem(int itemIndex) {
-        TaskE t = MainActivity.this.tasks.get(itemIndex);
+        TaskE t = MainActivity.this.list.getList().get(itemIndex);
         Intent i = new Intent(this, viewTask.class);
         i.putExtra("task", t.title);
         startActivity(i);
-    }
-
-    public void OnLongClickItem(final int itemIndex) {
-        new AlertDialog.Builder(this)
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteTask(itemIndex);
-            }
-        }). setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) { }
-        })
-        .setMessage(R.string.delete_task_confirm)
-        .create().show();
     }
 
     @Override
@@ -160,14 +172,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     private void addTask(String title) {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
-        tasks.add(new TaskE(title, date));
-        db.TaskDAO().insert(new TaskE(title, date));
-        adapter.notifyDataSetChanged();
-    }
-
-    private void deleteTask(int itemIndex) {
-        db.TaskDAO().delete(tasks.get(itemIndex));
-        tasks.remove(itemIndex);
+        list.add(title, date);
         adapter.notifyDataSetChanged();
     }
 }

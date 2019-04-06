@@ -10,13 +10,16 @@ package com.example.todo;
 //import org.junit.Before;
 import android.util.Log;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -27,6 +30,8 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -41,6 +46,15 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
+    @Before
+    public void setup() {
+        PersistentTaskList list = new PersistentTaskList("testdb", ApplicationProvider.getApplicationContext());
+        List<TaskE> l = list.getList();
+
+        while (!l.isEmpty()) {
+            list.remove(0);
+        }
+    }
 
     @Test
     public void createTaskAndView() {
@@ -58,7 +72,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void deleteTask() {
+    public void deleteTask() throws InterruptedException {
 
         ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -70,9 +84,8 @@ public class ExampleInstrumentedTest {
 
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(1)));
 
-        onView(withId(R.id.itemLayout)).perform(longClick());
-        onView(withText(R.string.yes)).perform(click());
-
+        onView(withId(R.id.itemLayout)).perform(swipeLeft());
+        Thread.sleep(1000);
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(0)));
     }
 
