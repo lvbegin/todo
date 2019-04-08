@@ -1,10 +1,11 @@
 package com.example.todo;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class viewTask extends AppCompatActivity {
     private TextView titleView;

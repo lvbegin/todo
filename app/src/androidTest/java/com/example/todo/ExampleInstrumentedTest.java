@@ -22,6 +22,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -30,6 +31,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -66,8 +68,8 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
         onView(withId(R.id.done_new_task_button)).perform(click());
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.isCompletelyDisplayed()));
-
-        onView(withId(R.id.itemLayout)).perform(click());
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
     }
 
@@ -84,9 +86,9 @@ public class ExampleInstrumentedTest {
 
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(1)));
 
-        onView(withId(R.id.itemLayout)).perform(swipeLeft());
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, swipeLeft()));
         Thread.sleep(1000);
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(0)));
     }
-
 }
