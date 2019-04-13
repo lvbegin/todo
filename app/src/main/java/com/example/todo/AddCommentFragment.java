@@ -9,17 +9,17 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AddCommentFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AddCommentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+interface AddCommentListener {
+    void OnAddCommentButtonClick();
+}
+
 public class AddCommentFragment extends Fragment {
+
+    private AddCommentListener mListener;
+    private Button button;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -27,7 +27,7 @@ public class AddCommentFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static AddCommentFragment newInstance(String param1, String param2) {
+    public static AddCommentFragment newInstance() {
         AddCommentFragment fragment = new AddCommentFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -36,6 +36,7 @@ public class AddCommentFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
     }
 
@@ -43,47 +44,38 @@ public class AddCommentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_comment, container, false);
+        View v = inflater.inflate(R.layout.fragment_add_comment, container, false);
+        button = v.findViewById(R.id.add_comment_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddCommentFragment.this.onButtonPressed();
+            }
+        });
+        return v;
     }
 
-    /*
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.OnAddCommentButtonClick();
         }
     }
-*/
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-/*        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof AddCommentListener) {
+            mListener = (AddCommentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement AddCommentListener");
         }
-        */
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        mListener = null;
     }
 }

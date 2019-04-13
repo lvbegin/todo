@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         TaskE t = MainActivity.this.list.getList().get(itemIndex);
         Intent i = new Intent(this, viewTask.class);
         i.putExtra("task", t.title);
+        i.putExtra("comment", t.comment);
         startActivity(i);
     }
 
@@ -168,13 +169,14 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         if (resultCode == RESULT_CANCELED)
             return ;
         String title = data.getExtras().getString("title");
-        addTask(title);
+        String comment = data.getExtras().getString("comment");
+        addTask(title, comment);
     }
 
-    private void addTask(String title) {
+    private void addTask(String title, String comment) {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
-        list.add(title, date);
+        list.add(title, comment, date);
         adapter.notifyDataSetChanged();
     }
 }

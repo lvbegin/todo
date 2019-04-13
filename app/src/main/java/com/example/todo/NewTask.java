@@ -2,16 +2,23 @@ package com.example.todo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-public class NewTask extends AppCompatActivity {
+public class NewTask extends AppCompatActivity implements AddCommentListener {
     private Button okButton;
     private Button cancelButton;
     private EditText title;
+    private Fragment commentFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +41,39 @@ public class NewTask extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String t = title.getText().toString();
+                if (t.length() == 0) {
+                    TextView errorMessage = findViewById(R.id.no_title_error_message);
+                    errorMessage.setVisibility(1);
+                    Toast.makeText(NewTask.this, "Some fields are mandatory", 3).show();
+                    return ;
+                }
+                String comment;
+                if (commentFragment != null)
+                    comment = ((TextView)commentFragment.getView().findViewById(R.id.comment)).getText().toString();
+                else
+                    comment = "";
                 Intent i = new Intent();
                 i.putExtra("title", t);
+                i.putExtra("comment", comment);
                 setResult(RESULT_OK, i);
                 finish();
             }
         });
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.fragment, AddCommentFragment.newInstance());
+        transaction.commit();
+    }
+
+    @Override
+    public void OnAddCommentButtonClick()
+    {
+        if (commentFragment == null)
+            commentFragment = commentBox.newInstance();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment, commentFragment);
+        transaction.commit();
     }
 }

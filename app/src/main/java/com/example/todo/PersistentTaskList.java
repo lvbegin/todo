@@ -40,8 +40,8 @@ public class PersistentTaskList {
         Collections.swap(tasks, position, position1);
     }
 
-    void add(String title, long date) {
-        TaskE newTask = new TaskE(title, date, tasks.size());
+    void add(String title, String comment, long date) {
+        TaskE newTask = new TaskE(title, comment, date, tasks.size());
         tasks.add(newTask);
         db.TaskDAO().insert(newTask);
 

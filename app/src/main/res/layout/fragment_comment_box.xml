@@ -3,15 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddCommentFragment">
+    tools:context=".commentBox">
 
     <!-- TODO: Update blank fragment layout -->
-
-    <Button
-        android:id="@+id/add_comment_button"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/comment"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Add comment" />
+        android:hint="Comment"
+        android:maxLines="5" />
 
 </FrameLayout>

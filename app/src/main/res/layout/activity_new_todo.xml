@@ -25,13 +25,19 @@
         android:hint="Title"
         android:inputType="textPersonName"></EditText>
 
-        <fragment
-            android:id="@+id/fragment"
-            android:name="com.example.todo.AddCommentFragment"
+        <TextView
+            android:id="@+id/no_title_error_message"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="323dp"
-            tools:layout_editor_absoluteY="199dp" />
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="The title is mandatory"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
     <RelativeLayout
