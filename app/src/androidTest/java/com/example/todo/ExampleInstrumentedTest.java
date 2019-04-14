@@ -59,12 +59,30 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void createTaskAndView() {
+    public void createTaskWithoutCommentAndView() {
 
         ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
         scenario.moveToState(Lifecycle.State.RESUMED);
         onView(withId(R.id.new_task_button)).perform(click());
         onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.listtodo)).check(matches(ViewMatchers.isCompletelyDisplayed()));
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+    }
+
+    @Test
+    public void createTaskWithCommentAndView() {
+
+        ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+        onView(withId(R.id.new_task_button)).perform(click());
+        onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.add_comment_button)).perform(click());
+        onView(withId(R.id.comment)).perform(typeText("new comment"));
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
         onView(withId(R.id.done_new_task_button)).perform(click());
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.isCompletelyDisplayed()));
@@ -91,4 +109,22 @@ public class ExampleInstrumentedTest {
         Thread.sleep(1000);
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(0)));
     }
+
+    @Test
+    public void cannotCreateTaskWithEmptyTitle() {
+
+        ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+        onView(withId(R.id.new_task_button)).perform(click());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.no_title_error_message)).check(matches(ViewMatchers.isCompletelyDisplayed()));
+        onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.listtodo)).check(matches(ViewMatchers.isCompletelyDisplayed()));
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+    }
+
 }

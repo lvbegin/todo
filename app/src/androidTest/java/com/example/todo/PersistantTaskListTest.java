@@ -54,15 +54,18 @@ public class PersistantTaskListTest {
     public void addTaskSwapAndRemove() {
         long date1 = 11111111;
         String title1 = "test title 1";
+        String comment1 = "test comment 1";
         long date2 = 22222222;
         String title2 = "test title 2";
+        String comment2 = "test comment 2";
         long date3 = 33333333;
         String title3 = "test title 3";
+        String comment3 = "test comment 3";
 
         assert(l.isEmpty());
-        list.add(title1, date1);
-        list.add(title2, date2);
-        list.add(title3, date3);
+        list.add(title1, comment1, date1);
+        list.add(title2, comment2, date2);
+        list.add(title3, comment3, date3);
         assertEquals(3, l.size());
         assertEquals(title1, l.get(0).title);
         assertEquals(date1, l.get(0).creationDate);
