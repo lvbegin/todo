@@ -9,4 +9,10 @@
         android:title="@string/edit_item"
         app:showAsAction = "never">
     </item>
+    <item
+        android:id="@+id/delete_task_item"
+        android:title="@string/dekete_item"
+        app:showAsAction = "never">
+    </item>
+
 </menu>

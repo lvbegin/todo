@@ -41,14 +41,19 @@ public class viewTask extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i = new Intent();
         switch(item.getItemId()) {
             case R.id.edit_task_item:
                 Log.d("LOLO", "Edit selected");
-                Intent i = new Intent();
                 i.putExtra("id", id);
-                setResult(RESULT_OK, i);
+                setResult(1, i);
                 finish();
                 return true;
+            case R.id.delete_task_item:
+                Log.d("LOLO", "Delete selected");
+                i.putExtra("id", id);
+                setResult(2, i);
+                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }

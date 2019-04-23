@@ -174,13 +174,19 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             return ;
 
         if (requestCode == 2) {
-            Log.d("LOLO", "request for modify entry received");
-            Intent intent = new Intent(this, TaskEntryActivity.class);
-            TaskE t = list.getById(data.getIntExtra("id", -1));
-            intent.putExtra("title", t.title);
-            intent.putExtra("comment", t.comment);
-            intent.putExtra("id", t.tid);
-            startActivityForResult(intent, 3);
+            if (resultCode == 1) {
+                Log.d("LOLO", "request for modify entry received");
+                Intent intent = new Intent(this, TaskEntryActivity.class);
+                TaskE t = list.getById(data.getIntExtra("id", -1));
+                intent.putExtra("title", t.title);
+                intent.putExtra("comment", t.comment);
+                intent.putExtra("id", t.tid);
+                startActivityForResult(intent, 3);
+            } else if (resultCode == 2) {
+                int position = list.idToIndex(data.getIntExtra("id", -1));
+                list.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
         } else if (requestCode == 1){
             String title = data.getExtras().getString("title");
             String comment = data.getExtras().getString("comment");
