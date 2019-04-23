@@ -25,9 +25,11 @@ import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
@@ -125,6 +127,30 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.listtodo))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+    }
+
+    @Test
+    public void createTaskAndThenEdit() {
+
+        ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+        onView(withId(R.id.new_task_button)).perform(click());
+        onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.add_comment_button)).perform(click());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getContext());
+        onView(withText(R.string.edit_item)).perform(click());
+
+        onView(withId(R.id.comment)).perform(typeText("new comment"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+        onView(withId(R.id.commentViewTask)).check(matches(withText("new comment")));
+
     }
 
 }

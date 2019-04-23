@@ -87,8 +87,6 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 }
 
 public class MainActivity extends AppCompatActivity implements OnClickItem {
-
-    private RecyclerView listToDo;
     private Button newButton;
     private MyAdapter adapter;
     private PersistentTaskList list;
@@ -101,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         list = new PersistentTaskList("tododb", getApplicationContext());
 
         adapter = new MyAdapter(list.getList(), this);
-        listToDo = (RecyclerView)findViewById(R.id.listtodo);
+        RecyclerView listToDo = (RecyclerView)findViewById(R.id.listtodo);
         listToDo.setLayoutManager(new LinearLayoutManager(this));
         listToDo.setAdapter( adapter);
         listToDo.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "new button pressed", 3).show();
-                Intent intent = new Intent(MainActivity.this, NewTask.class);
+                Intent intent = new Intent(MainActivity.this, TaskEntryActivity.class);
                 startActivityForResult(intent, 1);
             }
         });
@@ -157,20 +155,42 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     @Override
     public void OnClickItem(int itemIndex) {
         TaskE t = MainActivity.this.list.getList().get(itemIndex);
+        displayTask(t);
+    }
+
+    private void displayTask(TaskE t) {
         Intent i = new Intent(this, viewTask.class);
-        i.putExtra("task", t.title);
+        i.putExtra("title", t.title);
         i.putExtra("comment", t.comment);
-        startActivity(i);
+        i.putExtra("id", t.tid);
+        startActivityForResult(i, 2);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        /* should dispatch depending on requestCode */
         if (resultCode == RESULT_CANCELED)
             return ;
-        String title = data.getExtras().getString("title");
-        String comment = data.getExtras().getString("comment");
-        addTask(title, comment);
+
+        if (requestCode == 2) {
+            Log.d("LOLO", "request for modify entry received");
+            Intent intent = new Intent(this, TaskEntryActivity.class);
+            TaskE t = list.getById(data.getIntExtra("id", -1));
+            intent.putExtra("title", t.title);
+            intent.putExtra("comment", t.comment);
+            intent.putExtra("id", t.tid);
+            startActivityForResult(intent, 3);
+        } else if (requestCode == 1){
+            String title = data.getExtras().getString("title");
+            String comment = data.getExtras().getString("comment");
+            addTask(title, comment);
+        } else if (requestCode == 3) {
+            int id = data.getIntExtra("id", -1);
+            list.update(id, data.getStringExtra("title"), data.getStringExtra("comment"));
+            adapter.notifyItemChanged(data.getIntExtra("id", -1));
+            displayTask(MainActivity.this.list.getById(id));
+        }
     }
 
     private void addTask(String title, String comment) {
