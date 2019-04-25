@@ -13,7 +13,7 @@ public class ExampleUnitTest {
     @Test
     public void date_formatted_correctly() {
         long date = 891119878;
-        assertEquals("11/01/70", ViewFormating.dateToString(date));
+        assertEquals("11/01/1970", ViewFormating.dateToString(date));
     }
 
     @Test

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class viewTask extends AppCompatActivity {
     private TextView titleView;
     private TextView commentView;
+    private TextView creationDate;
     private int id;
 
     @Override
@@ -30,6 +31,9 @@ public class viewTask extends AppCompatActivity {
         titleView.setText(title);
         commentView = findViewById(R.id.commentViewTask);
         commentView.setText(comment);
+        creationDate = findViewById(R.id.CreationDateViewTask);
+        long date = intent.getLongExtra("creation date", -1);
+        creationDate.setText(ViewFormating.dateToString(date));
     }
 
     @Override

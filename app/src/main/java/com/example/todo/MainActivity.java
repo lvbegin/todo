@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         i.putExtra("title", t.title);
         i.putExtra("comment", t.comment);
         i.putExtra("id", t.tid);
+        i.putExtra("creation date", t.creationDate);
         startActivityForResult(i, 2);
     }
 
