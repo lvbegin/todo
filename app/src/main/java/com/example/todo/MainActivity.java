@@ -194,10 +194,14 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             addTask(title, comment);
         } else if (requestCode == 3) {
             int id = data.getIntExtra("id", -1);
-            list.update(id, data.getStringExtra("title"), data.getStringExtra("comment"));
-            adapter.notifyItemChanged(data.getIntExtra("id", -1));
+            updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
             displayTask(MainActivity.this.list.getById(id));
         }
+    }
+
+    private void updateTask(int id, String title, String comment) {
+        list.update(id, title, comment);
+        adapter.notifyItemChanged(id);
     }
 
     private void addTask(String title, String comment) {
