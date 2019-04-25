@@ -159,12 +159,10 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     private void displayTask(TaskE t) {
-        Intent i = new Intent(this, viewTask.class);
-        i.putExtra("title", t.title);
-        i.putExtra("comment", t.comment);
-        i.putExtra("id", t.tid);
-        i.putExtra("creation date", t.creationDate);
-        startActivityForResult(i, 2);
+        Intent intent = TaskEToIntent(t);
+        intent.setClass(this, viewTask.class);
+
+        startActivityForResult(intent, 2);
     }
 
     @Override
@@ -177,11 +175,9 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         if (requestCode == 2) {
             if (resultCode == 1) {
                 Log.d("LOLO", "request for modify entry received");
-                Intent intent = new Intent(this, TaskEntryActivity.class);
                 TaskE t = list.getById(data.getIntExtra("id", -1));
-                intent.putExtra("title", t.title);
-                intent.putExtra("comment", t.comment);
-                intent.putExtra("id", t.tid);
+                Intent intent = TaskEToIntent(t);//new Intent(this, TaskEntryActivity.class);
+                intent.setClass(this, TaskEntryActivity.class);
                 startActivityForResult(intent, 3);
             } else if (resultCode == 2) {
                 int position = list.idToIndex(data.getIntExtra("id", -1));
@@ -197,6 +193,15 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
             displayTask(MainActivity.this.list.getById(id));
         }
+    }
+
+    private static Intent TaskEToIntent(TaskE t) {
+        Intent intent = new Intent();
+        intent.putExtra("title", t.title);
+        intent.putExtra("comment", t.comment);
+        intent.putExtra("id", t.tid);
+        intent.putExtra("creation date", t.creationDate);
+        return intent;
     }
 
     private void updateTask(int id, String title, String comment) {
