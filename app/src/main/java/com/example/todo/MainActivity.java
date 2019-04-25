@@ -161,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     private void displayTask(TaskE t) {
         Intent intent = TaskEToIntent(t);
         intent.setClass(this, viewTask.class);
-
         startActivityForResult(intent, 2);
     }
 
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             if (resultCode == 1) {
                 Log.d("LOLO", "request for modify entry received");
                 TaskE t = list.getById(data.getIntExtra("id", -1));
-                Intent intent = TaskEToIntent(t);//new Intent(this, TaskEntryActivity.class);
+                Intent intent = TaskEToIntent(t);
                 intent.setClass(this, TaskEntryActivity.class);
                 startActivityForResult(intent, 3);
             } else if (resultCode == 2) {
