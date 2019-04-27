@@ -171,27 +171,49 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         if (resultCode == RESULT_CANCELED)
             return ;
 
-        if (requestCode == 2) {
-            if (resultCode == 1) {
-                Log.d("LOLO", "request for modify entry received");
+        switch (requestCode) {
+            case 1:
+                reactToNewTaskTermination(data);
+                break;
+            case 2:
+                reactToViewTaskTermination(resultCode, data);
+                break;
+            case 3:
+                reactToUpdateTaskTermination(data);
+                break;
+            default:
+                Log.e("TODO", "unexpected request code");
+        }
+    }
+
+    private void reactToViewTaskTermination(int resultCode, Intent data) {
+        switch (resultCode) {
+            case 1:
                 TaskE t = list.getById(data.getIntExtra("id", -1));
                 Intent intent = TaskEToIntent(t);
                 intent.setClass(this, TaskEntryActivity.class);
                 startActivityForResult(intent, 3);
-            } else if (resultCode == 2) {
+                break;
+            case 2:
                 int position = list.idToIndex(data.getIntExtra("id", -1));
                 list.remove(position);
                 adapter.notifyItemRemoved(position);
-            }
-        } else if (requestCode == 1){
-            String title = data.getExtras().getString("title");
-            String comment = data.getExtras().getString("comment");
-            addTask(title, comment);
-        } else if (requestCode == 3) {
-            int id = data.getIntExtra("id", -1);
-            updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
-            displayTask(MainActivity.this.list.getById(id));
+                break;
+            default:
+                Log.e("TODO", "unexpected result code");
         }
+    }
+
+    private void reactToUpdateTaskTermination(Intent data) {
+        int id = data.getIntExtra("id", -1);
+        updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
+        displayTask(MainActivity.this.list.getById(id));
+    }
+
+    private void reactToNewTaskTermination(Intent data) {
+        String title = data.getExtras().getString("title");
+        String comment = data.getExtras().getString("comment");
+        addTask(title, comment);
     }
 
     private static Intent TaskEToIntent(TaskE t) {
