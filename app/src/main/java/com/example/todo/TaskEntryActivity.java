@@ -77,7 +77,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
             transaction.commit();
         }
         else {
-            commentFragment = commentBox.newInstance();
+            commentFragment = commentBox.newInstance(initialComment);
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.add(R.id.fragment, commentFragment);
