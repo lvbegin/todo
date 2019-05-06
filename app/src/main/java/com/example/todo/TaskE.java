@@ -8,14 +8,15 @@ import androidx.room.PrimaryKey;
 public class TaskE {
 
     public TaskE(String title, String comment, long creationDate, int position) {
-        this.tid = 0;
+//        this.tid = 0;
         this.title = title;
         this.comment = comment;
         this.creationDate = creationDate;
         this.position = position;
+        this.done = false;
     }
     @PrimaryKey(autoGenerate = true)
-    public int tid;
+    public long tid;
 
     @ColumnInfo(name = "task_title")
     public String title;
@@ -25,6 +26,9 @@ public class TaskE {
 
     @ColumnInfo(name = "creation_date")
     public long creationDate;
+
+    @ColumnInfo(name = "done")
+    public boolean done;
 
     @ColumnInfo(name = "position")
     public int position;

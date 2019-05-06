@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import java.util.List;
 
 interface OnClickItem {
     void OnClickItem(int itemIndex);
+    void OnDoneChecked(int itemIndex, boolean checked);
 }
 
 class MyViewHolder extends RecyclerView.ViewHolder {
@@ -41,12 +44,24 @@ class MyViewHolder extends RecyclerView.ViewHolder {
         textView.setText(ViewFormating.TitleToDisplayTruncated(title));
     }
 
+    public void setChecked(boolean checked) {
+        CheckBox checkBox = this.itemView.findViewById(R.id.doneBox);
+        checkBox.setChecked(checked);
+    }
+
     public void setListeners(final OnClickItem onClick, final int itemIndex)
     {
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClick.OnClickItem(itemIndex);
+            }
+        });
+        CheckBox box = this.itemView.findViewById(R.id.doneBox);
+        box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onClick.OnDoneChecked(itemIndex, isChecked);
             }
         });
     }
@@ -72,6 +87,7 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder viewHolder, final int i) {
         viewHolder.setTitle(tasks.get(i).title);
         viewHolder.setDate(tasks.get(i).creationDate);
+        viewHolder.setChecked(tasks.get(i).done);
         viewHolder.setListeners(MyAdapter.this.onClickItem, i);
     }
 
@@ -158,6 +174,14 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         displayTask(t);
     }
 
+    @Override
+    public void OnDoneChecked(int itemIndex, boolean checked) {
+        TaskE t = MainActivity.this.list.getList().get(itemIndex);
+        updateTask(t.tid, t.title, t.comment, checked);
+        Log.d("TODO", "OnCheckedChange state changed on item " + new Integer(itemIndex).toString() + " " + (checked ? " selected" : "unselected"));
+
+    }
+
     private void displayTask(TaskE t) {
         Intent intent = TaskEToIntent(t);
         intent.setClass(this, viewTask.class);
@@ -189,13 +213,13 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     private void reactToViewTaskTermination(int resultCode, Intent data) {
         switch (resultCode) {
             case 1:
-                TaskE t = list.getById(data.getIntExtra("id", -1));
+                TaskE t = list.getById(data.getLongExtra("id", -1));
                 Intent intent = TaskEToIntent(t);
                 intent.setClass(this, TaskEntryActivity.class);
                 startActivityForResult(intent, 3);
                 break;
             case 2:
-                int position = list.idToIndex(data.getIntExtra("id", -1));
+                int position = list.idToIndex(data.getLongExtra("id", -1));
                 list.remove(position);
                 adapter.notifyItemRemoved(position);
                 break;
@@ -205,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     private void reactToUpdateTaskTermination(Intent data) {
-        int id = data.getIntExtra("id", -1);
+        long id = data.getLongExtra("id", -1);
         updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
         displayTask(MainActivity.this.list.getById(id));
     }
@@ -225,9 +249,14 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         return intent;
     }
 
-    private void updateTask(int id, String title, String comment) {
+    private void updateTask(long id, String title, String comment, boolean checked) {
+        list.update(id, title, comment, checked);
+        adapter.notifyItemChanged(list.idToIndex(id));
+    }
+
+    private void updateTask(long id, String title, String comment) {
         list.update(id, title, comment);
-        adapter.notifyItemChanged(id);
+        adapter.notifyItemChanged(list.idToIndex(id));
     }
 
     private void addTask(String title, String comment) {

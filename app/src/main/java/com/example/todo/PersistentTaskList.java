@@ -43,11 +43,11 @@ public class PersistentTaskList {
     public void add(String title, String comment, long date) {
         TaskE newTask = new TaskE(title, comment, date, tasks.size());
         tasks.add(newTask);
-        db.TaskDAO().insert(newTask);
+        newTask.tid = db.TaskDAO().insert(newTask);
 
     }
 
-    public int idToIndex(int id) {
+    public int idToIndex(long id) {
         for(int i = 0; i < tasks.size(); i++) {
             if (tasks.get(i).tid == id)
                 return i;
@@ -55,15 +55,24 @@ public class PersistentTaskList {
         return -1;
     }
 
-    public TaskE getById(int id) {
+    public TaskE getById(long id) {
         int index = idToIndex((id));
         return -1 == index ? null : tasks.get(index);
     }
 
-    public void update(int id, String title, String comment) {
+    public void update(long id, String title, String comment) {
         TaskE t = getById(id);
         t.title = title;
         t.comment = comment;
         db.TaskDAO().update(t);
     }
+
+    public void update(long id, String title, String comment, boolean done) {
+        TaskE t = getById(id);
+        t.title = title;
+        t.comment = comment;
+        t.done = done;
+        db.TaskDAO().update(t);
+    }
+
 }

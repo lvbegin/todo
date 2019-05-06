@@ -38,6 +38,7 @@ import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
@@ -172,6 +173,20 @@ public class ExampleInstrumentedTest {
         Thread.sleep(1000);
         onView(withId(R.id.listtodo)).check(matches(ViewMatchers.hasChildCount(0)));
 
+    }
+
+    @Test
+    public void createTaskAndThenCheckDone() {
+
+        ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+        onView(withId(R.id.new_task_button)).perform(click());
+        onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.doneBox))
+                .perform(click());
+        onView(withId(R.id.doneBox)).check(matches(isChecked()));
     }
 
 }

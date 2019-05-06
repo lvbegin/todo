@@ -15,7 +15,7 @@ public interface TaskDAO {
     List<TaskE> getAll();
 
     @Insert
-    void insert(TaskE t);
+    long insert(TaskE t);
 
     @Delete
     void delete(TaskE t);

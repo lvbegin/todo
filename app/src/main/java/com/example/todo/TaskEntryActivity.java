@@ -18,7 +18,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private Button okButton;
     private Button cancelButton;
     private EditText title;
-    private int idTask;
+    private long idTask;
     private Fragment commentFragment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         Intent intent = getIntent();
         String intitialTitle = null;
         String initialComment = null;
-        idTask = intent.getIntExtra("id", -1);
+        idTask = intent.getLongExtra("id", -1);
         intitialTitle = intent.getStringExtra("title");
         initialComment = intent.getStringExtra("comment");
         if (intitialTitle != null) {

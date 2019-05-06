@@ -15,7 +15,7 @@ public class viewTask extends AppCompatActivity {
     private TextView titleView;
     private TextView commentView;
     private TextView creationDate;
-    private int id;
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class viewTask extends AppCompatActivity {
         setContentView(R.layout.activity_view_task);
         Log.d("LOLO", "start view activity");
         Intent intent = getIntent();
-        id = intent.getIntExtra("id", -1);
+        id = intent.getLongExtra("id", -1);
         String title = intent.getStringExtra("title");
         String comment = intent.getStringExtra("comment");
         titleView = findViewById(R.id.titleViewTask);

@@ -49,7 +49,20 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.766" />
+            app:layout_constraintVertical_bias="0.764" />
+
+        <CheckBox
+            android:id="@+id/doneBox"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_weight="1"
+            android:text="Done"
+            app:layout_constraintBottom_toTopOf="@+id/dateHint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/itemText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
