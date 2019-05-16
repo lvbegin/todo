@@ -49,19 +49,20 @@ class MyViewHolder extends RecyclerView.ViewHolder {
         checkBox.setChecked(checked);
     }
 
-    public void setListeners(final OnClickItem onClick, final int itemIndex)
+    public void setListeners(final OnClickItem onClick, int itemIndex)
     {
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClick.OnClickItem(itemIndex);
+
+                onClick.OnClickItem(MyViewHolder.this.getAdapterPosition());
             }
         });
         CheckBox box = this.itemView.findViewById(R.id.doneBox);
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onClick.OnDoneChecked(itemIndex, isChecked);
+                onClick.OnDoneChecked(MyViewHolder.this.getAdapterPosition(), isChecked);
             }
         });
     }
@@ -251,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
 
     private void updateTask(long id, String title, String comment, boolean checked) {
         list.update(id, title, comment, checked);
-        adapter.notifyItemChanged(list.idToIndex(id));
     }
 
     private void updateTask(long id, String title, String comment) {
