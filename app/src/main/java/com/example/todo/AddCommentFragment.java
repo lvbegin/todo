@@ -21,8 +21,6 @@ public class AddCommentFragment extends Fragment {
     private AddCommentListener mListener;
     private Button button;
 
-//    private OnFragmentInteractionListener mListener;
-
     public AddCommentFragment() {
         // Required empty public constructor
     }

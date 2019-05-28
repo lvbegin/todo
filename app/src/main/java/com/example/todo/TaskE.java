@@ -8,13 +8,13 @@ import androidx.room.PrimaryKey;
 public class TaskE {
 
     public TaskE(String title, String comment, long creationDate, int position) {
-//        this.tid = 0;
         this.title = title;
         this.comment = comment;
         this.creationDate = creationDate;
         this.position = position;
         this.done = false;
     }
+
     @PrimaryKey(autoGenerate = true)
     public long tid;
 
