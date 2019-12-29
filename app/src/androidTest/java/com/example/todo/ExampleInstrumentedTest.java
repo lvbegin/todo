@@ -8,9 +8,15 @@ package com.example.todo;
 //import android.support.test.espresso.matcher.ViewMatchers;
 //mport android.support.test.runner.AndroidJUnit4;
 //import org.junit.Before;
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,6 +29,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -38,9 +45,12 @@ import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.isInternal;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 /**
@@ -114,7 +124,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void cannotCreateTaskWithEmptyTitle() {
+    public void cannotCreateTaskWithEmptyTitle() throws InterruptedException {
 
         ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -187,6 +197,38 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.doneBox))
                 .perform(click());
         onView(withId(R.id.doneBox)).check(matches(isChecked()));
+    }
+
+    @Rule
+    public IntentsTestRule<com.example.todo.MainActivity> intentsRule = new IntentsTestRule<>(com.example.todo.MainActivity.class);
+
+
+    private void testAddingPicture(String how) {
+        ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+
+        Bitmap icon = BitmapFactory.decodeResource(
+                InstrumentationRegistry.getInstrumentation().getContext().getResources(),
+                R.mipmap.ic_launcher);
+
+        Intent resultData = new Intent();
+        resultData.putExtra("data", icon);
+        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+
+        onView(withId(R.id.new_task_button)).perform(click());
+        onView(withId(R.id.add_picture_button)).perform(click());
+
+        onView(withText(how)).perform(click());
+    }
+
+    @Test
+    public void userCameraToTakeAPhoto() {
+        testAddingPicture("Camera");
+    }
+
+    @Test
+    public void getPictureFromGallery() {
+        testAddingPicture("Gallery");
     }
 
 }

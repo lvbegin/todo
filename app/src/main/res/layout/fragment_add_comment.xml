@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".AddCommentFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <Button
         android:id="@+id/add_comment_button"
         android:layout_width="wrap_content"
