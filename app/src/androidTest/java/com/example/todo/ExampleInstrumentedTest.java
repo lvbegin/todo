@@ -217,18 +217,17 @@ public class ExampleInstrumentedTest {
 
         onView(withId(R.id.new_task_button)).perform(click());
         onView(withId(R.id.add_picture_button)).perform(click());
-
         onView(withText(how)).perform(click());
     }
 
     @Test
     public void userCameraToTakeAPhoto() {
-        testAddingPicture("Camera");
+        testAddingPicture(intentsRule.getActivity().getString(R.string.camera));
     }
 
     @Test
     public void getPictureFromGallery() {
-        testAddingPicture("Gallery");
+        testAddingPicture(intentsRule.getActivity().getString(R.string.gallery));
     }
 
 }
