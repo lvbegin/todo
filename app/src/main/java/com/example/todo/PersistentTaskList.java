@@ -13,7 +13,7 @@ public class PersistentTaskList {
     List<TaskE> tasks = null;
 
     public PersistentTaskList(String dbName, Context context) {
-        db = Room.databaseBuilder(context, TaskDB.class, "tododb").allowMainThreadQueries().build();
+        db = Room.databaseBuilder(context, TaskDB.class, dbName).allowMainThreadQueries().build();
         tasks = db.TaskDAO().getAll();
     }
 
