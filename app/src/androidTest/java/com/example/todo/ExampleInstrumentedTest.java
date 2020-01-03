@@ -10,9 +10,12 @@ package com.example.todo;
 //import org.junit.Before;
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import org.junit.Before;
@@ -70,6 +73,9 @@ public class ExampleInstrumentedTest {
             list.remove(0);
         }
     }
+
+    @Rule
+    public IntentsTestRule<com.example.todo.MainActivity> intentsRule = new IntentsTestRule<>(com.example.todo.MainActivity.class);
 
     @Test
     public void createTaskWithoutCommentAndView() {
@@ -199,20 +205,10 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.doneBox)).check(matches(isChecked()));
     }
 
-    @Rule
-    public IntentsTestRule<com.example.todo.MainActivity> intentsRule = new IntentsTestRule<>(com.example.todo.MainActivity.class);
-
-
-    private void testAddingPicture(String how) {
+    private void testAddingPicture(String how, Intent resultData) {
         ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
         scenario.moveToState(Lifecycle.State.RESUMED);
 
-        Bitmap icon = BitmapFactory.decodeResource(
-                InstrumentationRegistry.getInstrumentation().getContext().getResources(),
-                R.mipmap.ic_launcher);
-
-        Intent resultData = new Intent();
-        resultData.putExtra("data", icon);
         intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
 
         onView(withId(R.id.new_task_button)).perform(click());
@@ -220,14 +216,32 @@ public class ExampleInstrumentedTest {
         onView(withText(how)).perform(click());
     }
 
+    private Bitmap getABitmap() {
+        return  BitmapFactory.decodeResource(intentsRule.getActivity().getResources(), R.mipmap.ic_launcher);
+
+    }
+
     @Test
     public void userCameraToTakeAPhoto() {
-        testAddingPicture(intentsRule.getActivity().getString(R.string.camera));
+        Intent resultData = new Intent();
+        resultData.putExtra("data", getABitmap());
+
+        testAddingPicture(intentsRule.getActivity().getString(R.string.camera), resultData);
     }
 
     @Test
     public void getPictureFromGallery() {
-        testAddingPicture(intentsRule.getActivity().getString(R.string.gallery));
+        Resources resources = intentsRule.getActivity().getResources();
+        Uri uri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(resources.getResourcePackageName(R.mipmap.ic_launcher))
+                .appendPath(resources.getResourceTypeName(R.mipmap.ic_launcher))
+                .appendPath(resources.getResourceEntryName(R.mipmap.ic_launcher))
+                .build();
+        Intent resultData = new Intent();
+        resultData.setData(uri);
+
+        testAddingPicture(intentsRule.getActivity().getString(R.string.gallery), resultData);
     }
 
 }
