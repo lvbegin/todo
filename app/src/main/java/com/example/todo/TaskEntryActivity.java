@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,52 +37,13 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import androidx.room.Room;
 
-
-//class CustomGalleryAdapter extends BaseAdapter {
-class CustomGalleryAdapter extends BaseAdapter {
-    private Context context;
-    private Bitmap[] images;
-
-    public CustomGalleryAdapter(Context c, Bitmap[] images) {
-        context = c;
-        this.images = images;
-    }
-
-    // returns the number of imagesView
-    public int getCount() {
-        return images.length;
-    }
-
-    // returns the ID of an item
-    public Object getItem(int position) {
-        return position;
-    }
-
-    // returns the ID of an item
-    public long getItemId(int position) {
-        return position;
-    }
-
-    // returns an ImageView view
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-
-            convertView = LayoutInflater.from(context).inflate(R.layout.image, parent, false);
-        }
-        ImageView view = convertView.findViewById(R.id.imageView);
-        view.setImageBitmap(Bitmap.createScaledBitmap(images[position], 120, 120, false));
-        return convertView;
-    }
-}
-
-
-
-class CustomGalleryAdapter2 extends RecyclerView.Adapter {
+class CustomGalleryAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Bitmap> images;
 
-    public CustomGalleryAdapter2(Context c, List<Bitmap> images) {
+    public CustomGalleryAdapter(Context c, List<Bitmap> images) {
         context = c;
         this.images = images;
     }
@@ -134,7 +94,9 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private long idTask;
     private Fragment commentFragment = null;
     private List<Bitmap> images;
-    private CustomGalleryAdapter2 imageAdapter;
+    private ArrayList<String> imagesUri;
+    private CustomGalleryAdapter imageAdapter;
+    private TaskDB db;
 
     private void setReferenceToViews() {
         title = findViewById(R.id.new_task_title);
@@ -172,6 +134,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
                 i.putExtra("title", t);
                 i.putExtra("comment", comment);
                 i.putExtra("id", TaskEntryActivity.this.idTask);
+                i.putStringArrayListExtra("pictures", imagesUri);
                 setResult(RESULT_OK, i);
                 finish();
             }
@@ -212,7 +175,19 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
 
     private void setUpImageList() {
         images = new ArrayList<Bitmap>();
-        imageAdapter = new CustomGalleryAdapter2(this, images);
+        if (null == imagesUri)
+            imagesUri = new ArrayList<String>();
+
+        List<Bitmap> images = new ArrayList<Bitmap>();
+        for (String uri : imagesUri) {
+            try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(uri));
+                    images.add(bitmap);
+                } catch (IOException e) {
+                }
+        }
+
+        imageAdapter = new CustomGalleryAdapter(this, images);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
         imagesView.setLayoutManager(layoutManager);
         imagesView.setAdapter(imageAdapter);
@@ -224,7 +199,8 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         setContentView(R.layout.activity_new_todo);
         setReferenceToViews();
         setListeners();
-        setUpImageList();
+
+        db = Room.databaseBuilder(this, TaskDB.class, "tododb").allowMainThreadQueries().build();
 
         Intent intent = getIntent();
         String intitialTitle = null;
@@ -244,6 +220,10 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
             transaction.commit();
         } else
             createCommandFragment(initialComment);
+
+        imagesUri = intent.getStringArrayListExtra("pictures");
+        setUpImageList();
+
     }
 
     @Override
@@ -287,6 +267,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
             return ;
         }
         imageAdapter.add(image);
+        imagesUri.add(imageUri.toString());
     }
 
     private void displayErrorGettingImageMassage() {

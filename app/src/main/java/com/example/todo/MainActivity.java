@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -238,15 +239,25 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     private void reactToNewTaskTermination(Intent data) {
         String title = data.getExtras().getString("title");
         String comment = data.getExtras().getString("comment");
-        addTask(title, comment);
+        List<String> imagesUri = data.getStringArrayListExtra("pictures");
+        for (String image : imagesUri) {
+            Log.d("TODO", "uri retrieved:" + image);
+        }
+        addTask(title, comment, imagesUri);
     }
 
-    private static Intent TaskEToIntent(TaskE t) {
+    private Intent TaskEToIntent(TaskE t) {
         Intent intent = new Intent();
         intent.putExtra("title", t.title);
         intent.putExtra("comment", t.comment);
         intent.putExtra("id", t.tid);
         intent.putExtra("creation date", t.creationDate);
+        ArrayList<String> uri = new ArrayList<String>();
+        List<TaskPicture> taskPictures = list.getTaskPictureList(t);
+        for (TaskPicture taskPicture : taskPictures) {
+            uri.add(taskPicture.uri);
+        }
+        intent.putStringArrayListExtra("pictures", uri);
         return intent;
     }
 
@@ -259,10 +270,10 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         adapter.notifyItemChanged(list.idToIndex(id));
     }
 
-    private void addTask(String title, String comment) {
+    private void addTask(String title, String comment, List<String> imagesUri) {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
-        list.add(title, comment, date);
+        list.add(title, comment, date, imagesUri);
         adapter.notifyDataSetChanged();
     }
 }
