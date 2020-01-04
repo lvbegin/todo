@@ -66,7 +66,7 @@ public class ExampleInstrumentedTest {
 
     @Before
     public void setup() {
-        PersistentTaskList list = new PersistentTaskList("testdb", ApplicationProvider.getApplicationContext());
+        PersistentTaskList list = new PersistentTaskList("tododb", ApplicationProvider.getApplicationContext());
         List<TaskE> l = list.getList();
 
         while (!l.isEmpty()) {
