@@ -2,6 +2,7 @@ package com.example.todo;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,9 @@ public class PersistentTaskList {
         return  tasks;
     }
 
+    public List<TaskPicture> getTaskPictureList(TaskE task) {
+        return db.TaskPictureDAO().getAllAssociatedToTask(task.tid);
+    }
     public void remove(int index) {
         db.TaskDAO().decrementPositionsFrom(index);
         db.TaskDAO().delete(tasks.get(index));
@@ -40,11 +44,14 @@ public class PersistentTaskList {
         Collections.swap(tasks, position, position1);
     }
 
-    public void add(String title, String comment, long date) {
+    public void add(String title, String comment, long date, List<String> imagesUri) {
         TaskE newTask = new TaskE(title, comment, date, tasks.size());
         tasks.add(newTask);
         newTask.tid = db.TaskDAO().insert(newTask);
-
+        for (String uri: imagesUri) {
+            Log.d("TOTO", "inserting uri in db: " + uri);
+            db.TaskPictureDAO().insert(new TaskPicture(newTask.tid, uri));
+        }
     }
 
     public int idToIndex(long id) {

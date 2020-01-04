@@ -12,11 +12,16 @@ import androidx.room.PrimaryKey;
         onDelete = ForeignKey.CASCADE))
 public class TaskPicture {
 
+    public TaskPicture(long task_id, String uri) {
+        this.task_id = task_id;
+        this.uri = uri;
+    }
+
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public long id;
 
     @ColumnInfo(name = "task_id")
-    public int task_id;
+    public long task_id;
 
     @ColumnInfo(name = "picture_uri")
     public String uri;

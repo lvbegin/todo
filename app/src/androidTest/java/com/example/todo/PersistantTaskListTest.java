@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.lifecycle.Lifecycle;
@@ -55,17 +56,23 @@ public class PersistantTaskListTest {
         long date1 = 11111111;
         String title1 = "test title 1";
         String comment1 = "test comment 1";
+        ArrayList<String> dummyListUri1 = new ArrayList();
         long date2 = 22222222;
         String title2 = "test title 2";
         String comment2 = "test comment 2";
+        ArrayList<String> dummyListUri2 = new ArrayList();
+        dummyListUri2.add("dummy uri 1");
         long date3 = 33333333;
         String title3 = "test title 3";
         String comment3 = "test comment 3";
+        ArrayList<String> dummyListUri3 = new ArrayList();
+        dummyListUri3.add("dummy uri 2");
+        dummyListUri3.add("dummy uri 3");
 
-        assert(l.isEmpty());
-        list.add(title1, comment1, date1);
-        list.add(title2, comment2, date2);
-        list.add(title3, comment3, date3);
+        assert (l.isEmpty());
+        list.add(title1, comment1, date1, dummyListUri1);
+        list.add(title2, comment2, date2, dummyListUri2);
+        list.add(title3, comment3, date3, dummyListUri3);
         assertEquals(3, l.size());
         assertEquals(title1, l.get(0).title);
         assertEquals(date1, l.get(0).creationDate);
@@ -132,5 +139,54 @@ public class PersistantTaskListTest {
 
     }
 
+    @Test
+    public void addTaskWithPictures() {
+        long date = 11111111;
+        String title = "test title";
+        String comment = "test comment";
+        String dummyUri1 = "dummy uri 1";
+        String dummyUri2 = "dummy uri 2";
+        ArrayList<String> dummyListUri = new ArrayList();
+        dummyListUri.add(dummyUri1);
+        dummyListUri.add(dummyUri2);
 
+        assert (l.isEmpty());
+        list.add(title, comment, date, dummyListUri);
+        l = list.getList();
+        assertEquals(1, l.size());
+        List<TaskPicture> taskPictures = list.getTaskPictureList(l.get(0));
+        assertEquals(2, taskPictures.size());
+        assertEquals(dummyUri1, taskPictures.get(0).uri);
+        assertEquals(dummyUri2, taskPictures.get(1).uri);
+    }
+
+    @Test
+    public void addTaskWithPicturesThenDelete() {
+        long date = 11111111;
+        String title = "test title";
+        String comment = "test comment";
+        String dummyUri1 = "dummy uri 1";
+        String dummyUri2 = "dummy uri 2";
+        ArrayList<String> dummyListUri = new ArrayList();
+        dummyListUri.add(dummyUri1);
+        dummyListUri.add(dummyUri2);
+
+        assert (l.isEmpty());
+        list.add(title, comment, date, dummyListUri);
+        l = list.getList();
+        assertEquals(1, l.size());
+        TaskE t = l.get(0);
+        list.remove(0);
+        assertEquals(0, l.size());
+        List<TaskPicture> taskPictures = list.getTaskPictureList(t);
+        assertEquals(0, taskPictures.size());
+
+        list = new PersistentTaskList("testdb", ApplicationProvider.getApplicationContext());
+        l = list.getList();
+        assertEquals(0, l.size());
+        taskPictures = list.getTaskPictureList(t);
+        assertEquals(0, taskPictures.size());
+
+
+    }
 }

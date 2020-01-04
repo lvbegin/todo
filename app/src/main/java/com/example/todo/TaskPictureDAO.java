@@ -16,6 +16,6 @@ public interface TaskPictureDAO {
     @Delete
     void delete(TaskPicture t);
 
-    @Query("SELECT * FROM task_picture WHERE task_id = :task_id")
-    List<TaskPicture> getAllAssociatedToTask(int task_id);
+    @Query("SELECT * FROM task_picture WHERE task_id = :task_id ORDER BY id ASC")
+    List<TaskPicture> getAllAssociatedToTask(long task_id);
 }
