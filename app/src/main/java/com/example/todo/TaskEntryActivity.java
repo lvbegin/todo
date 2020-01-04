@@ -2,7 +2,6 @@ package com.example.todo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,13 +10,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,59 +24,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import androidx.room.Room;
-
-class CustomGalleryAdapter extends RecyclerView.Adapter {
-    private Context context;
-    private List<Bitmap> images;
-
-    public CustomGalleryAdapter(Context c, List<Bitmap> images) {
-        context = c;
-        this.images = images;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.image, viewGroup, false);
-                //(ImageView)viewGroup.findViewById(R.id.imageView);
-        ImageView imageView = layout.findViewById(R.id.imageView);
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(images.get(i), 240, 240, false));
-
-        return new ViewHolder(layout) {
-            @Override
-            public String toString() {
-                return "image";
-            }
-        };
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        LinearLayout layout = (LinearLayout) viewHolder.itemView;
-        ImageView imageView = layout.findViewById(R.id.imageView);
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(images.get(i), 240, 240, false));
-    }
-
-    @Override
-    public int getItemCount() {
-        return images.size();
-    }
-
-    public void add(Bitmap image)  {
-        images.add(image);
-        notifyDataSetChanged();
-    }
-}
-
 
 public class TaskEntryActivity extends AppCompatActivity implements AddCommentListener {
     static final int GALLERY_ACTIVITY = 1;
@@ -95,8 +43,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private Fragment commentFragment = null;
     private List<Bitmap> images;
     private ArrayList<String> imagesUri;
-    private CustomGalleryAdapter imageAdapter;
-    private TaskDB db;
+    private PictureGalleryAdapter imageAdapter;
 
     private void setReferenceToViews() {
         title = findViewById(R.id.new_task_title);
@@ -178,7 +125,6 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         if (null == imagesUri)
             imagesUri = new ArrayList<String>();
 
-        List<Bitmap> images = new ArrayList<Bitmap>();
         for (String uri : imagesUri) {
             try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(uri));
@@ -187,7 +133,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
                 }
         }
 
-        imageAdapter = new CustomGalleryAdapter(this, images);
+        imageAdapter = new PictureGalleryAdapter(this, images);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
         imagesView.setLayoutManager(layoutManager);
         imagesView.setAdapter(imageAdapter);
@@ -199,8 +145,6 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         setContentView(R.layout.activity_new_todo);
         setReferenceToViews();
         setListeners();
-
-        db = Room.databaseBuilder(this, TaskDB.class, "tododb").allowMainThreadQueries().build();
 
         Intent intent = getIntent();
         String intitialTitle = null;
