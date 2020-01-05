@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.DataInteraction;
@@ -205,6 +206,12 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.doneBox)).check(matches(isChecked()));
     }
 
+    private void checkImageDisplayed(int recyclerViewId, int nbImages) {
+        Activity currentActivity = intentsRule.getActivity();
+        RecyclerView view = (RecyclerView) currentActivity.findViewById(R.id.images);
+        assert(nbImages == view.getAdapter().getItemCount());
+    }
+
     private void testAddingPicture(String how, Intent resultData) {
         ActivityScenario<com.example.todo.MainActivity> scenario = ActivityScenario.launch(com.example.todo.MainActivity.class);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -212,8 +219,20 @@ public class ExampleInstrumentedTest {
         intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
 
         onView(withId(R.id.new_task_button)).perform(click());
+        checkImageDisplayed(R.id.images, 0);
         onView(withId(R.id.add_picture_button)).perform(click());
         onView(withText(how)).perform(click());
+        checkImageDisplayed(R.id.images, 1);
+
+        onView(withId(R.id.new_task_title)).perform(typeText("new task"));
+        onView(withId(R.id.done_new_task_button)).perform(click());
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
+        checkImageDisplayed(R.id.images_to_view, 1);
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getContext());
+        onView(withText(R.string.edit_item)).perform(click());
+        checkImageDisplayed(R.id.images, 1);
     }
 
     private Bitmap getABitmap() {

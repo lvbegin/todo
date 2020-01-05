@@ -117,7 +117,6 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
                         .create().show();
             }
         });
-
     }
 
     private void setUpImageList() {
