@@ -76,7 +76,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
                 if (commentFragment != null)
                     comment = ((TextView) commentFragment.getView().findViewById(R.id.comment)).getText().toString();
                 else
-                    comment = "";
+                    comment = null;
                 Intent i = new Intent();
                 i.putExtra("title", t);
                 i.putExtra("comment", comment);
