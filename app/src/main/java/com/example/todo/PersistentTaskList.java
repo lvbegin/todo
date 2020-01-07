@@ -4,6 +4,7 @@ package com.example.todo;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,16 @@ public class PersistentTaskList {
     public List<TaskPicture> getTaskPictureList(TaskE task) {
         return db.TaskPictureDAO().getAllAssociatedToTask(task.tid);
     }
+
+    public ArrayList<String> getUriPictureArrayList(TaskE task) {
+        List<TaskPicture> l  = db.TaskPictureDAO().getAllAssociatedToTask(task.tid);
+        ArrayList<String> result = new ArrayList();
+        for (TaskPicture taskPicture : l) {
+            result.add(taskPicture.uri);
+        }
+        return result;
+    }
+
     public void remove(int index) {
         db.TaskDAO().decrementPositionsFrom(index);
         db.TaskDAO().delete(tasks.get(index));

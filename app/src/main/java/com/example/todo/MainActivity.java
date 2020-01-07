@@ -1,6 +1,7 @@
 package com.example.todo;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -181,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         TaskE t = MainActivity.this.list.getList().get(itemIndex);
         updateTask(t.tid, t.title, t.comment, checked);
         Log.d("TODO", "OnCheckedChange state changed on item " + new Integer(itemIndex).toString() + " " + (checked ? " selected" : "unselected"));
-
     }
 
     private void displayTask(TaskE t) {
@@ -216,8 +216,8 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         switch (resultCode) {
             case 1:
                 TaskE t = list.getById(data.getLongExtra("id", -1));
-                Intent intent = TaskEToIntent(t);
-                intent.setClass(this, TaskEntryActivity.class);
+                List<String> uris  = list.getUriPictureArrayList(t);
+                Intent intent = TaskEntryActivity.prepareIntent(this, t.tid, t.title, t.comment, t.creationDate, uris);
                 startActivityForResult(intent, 3);
                 break;
             case 2:
@@ -237,28 +237,28 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     private void reactToNewTaskTermination(Intent data) {
-        String title = data.getExtras().getString("title");
-        String comment = data.getExtras().getString("comment");
-        List<String> imagesUri = data.getStringArrayListExtra("pictures");
+        String title = TaskEntryActivity.titleResult(data);
+        String comment = TaskEntryActivity.commentResult(data);
+        List<String> imagesUri = TaskEntryActivity.listImageUri(data);
         for (String image : imagesUri) {
             Log.d("TODO", "uri retrieved:" + image);
         }
         addTask(title, comment, imagesUri);
     }
 
-    private Intent TaskEToIntent(TaskE t) {
+    private Intent prepareIntent(long taskId, String title, String comment, long creationDate, List<String> uris) {
         Intent intent = new Intent();
-        intent.putExtra("title", t.title);
-        intent.putExtra("comment", t.comment);
-        intent.putExtra("id", t.tid);
-        intent.putExtra("creation date", t.creationDate);
-        ArrayList<String> uri = new ArrayList<String>();
-        List<TaskPicture> taskPictures = list.getTaskPictureList(t);
-        for (TaskPicture taskPicture : taskPictures) {
-            uri.add(taskPicture.uri);
-        }
-        intent.putStringArrayListExtra("pictures", uri);
+        intent.putExtra("title", title);
+        intent.putExtra("comment", comment);
+        intent.putExtra("id", taskId);
+        intent.putExtra("creation date", creationDate);
+        intent.putStringArrayListExtra("pictures", new ArrayList<String>(uris));
         return intent;
+    }
+
+    private Intent TaskEToIntent(TaskE t) {
+        List<String> uris = list.getUriPictureArrayList(t);
+        return viewTask.prepareIntent(this, t.tid, t.title, t.comment, t.creationDate, uris);
     }
 
     private void updateTask(long id, String title, String comment, boolean checked) {

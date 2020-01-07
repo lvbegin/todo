@@ -2,6 +2,7 @@ package com.example.todo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,8 +33,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class TaskEntryActivity extends AppCompatActivity implements AddCommentListener {
-    static final int GALLERY_ACTIVITY = 1;
-    static final int CAMERA_ACTIVITY = 2;
+    private static final int GALLERY_ACTIVITY = 1;
+    private static final int CAMERA_ACTIVITY = 2;
+    private static final String TITLE_KEY = "title";
+    private static final String COMMENT_KEY = "comment";
+    private static final String ID_TASK_KEY = "id";
+    private static final String CREATION_DATE_KEY = "creation_date";
+    private static final String PICTURES_KEY = "pictures";
     private Button okButton;
     private Button cancelButton;
     private Button addPictureButton;
@@ -44,6 +50,33 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private List<Bitmap> images;
     private ArrayList<String> imagesUri;
     private PictureGalleryAdapter imageAdapter;
+
+    static public Intent prepareIntent(Context context, long taskId, String title, String comment, long creationDate, List<String> uris) {
+        Intent intent = new Intent();
+        intent.putExtra(TITLE_KEY, title);
+        intent.putExtra(COMMENT_KEY, comment);
+        intent.putExtra(ID_TASK_KEY, taskId);
+        intent.putExtra(CREATION_DATE_KEY, creationDate);
+        intent.putStringArrayListExtra(PICTURES_KEY, new ArrayList<String>(uris));
+        intent.setClass(context, TaskEntryActivity.class);
+        return intent;
+    }
+
+    static public String titleResult(Intent intent) {
+        return intent.getExtras().getString(TITLE_KEY);
+    }
+
+    static public String commentResult(Intent intent) {
+        return intent.getExtras().getString(COMMENT_KEY);
+    }
+
+    static public long idTaskResult(Intent intent) {
+        return intent.getExtras().getLong(ID_TASK_KEY);
+    }
+
+    static public List<String> listImageUri(Intent intent) {
+        return intent.getExtras().getStringArrayList(PICTURES_KEY);
+    }
 
     private void setReferenceToViews() {
         title = findViewById(R.id.new_task_title);
@@ -78,10 +111,10 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
                 else
                     comment = null;
                 Intent i = new Intent();
-                i.putExtra("title", t);
-                i.putExtra("comment", comment);
-                i.putExtra("id", TaskEntryActivity.this.idTask);
-                i.putStringArrayListExtra("pictures", imagesUri);
+                i.putExtra(TITLE_KEY, t);
+                i.putExtra(COMMENT_KEY, comment);
+                i.putExtra(ID_TASK_KEY, TaskEntryActivity.this.idTask);
+                i.putStringArrayListExtra(PICTURES_KEY, imagesUri);
                 setResult(RESULT_OK, i);
                 finish();
             }
@@ -138,19 +171,12 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         imagesView.setAdapter(imageAdapter);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_todo);
-        setReferenceToViews();
-        setListeners();
-
-        Intent intent = getIntent();
+    private void initializeViewsFromIntent(Intent intent) {
         String intitialTitle = null;
         String initialComment = null;
-        idTask = intent.getLongExtra("id", -1);
-        intitialTitle = intent.getStringExtra("title");
-        initialComment = intent.getStringExtra("comment");
+        idTask = intent.getLongExtra(ID_TASK_KEY, -1);
+        intitialTitle = intent.getStringExtra(TITLE_KEY);
+        initialComment = intent.getStringExtra(COMMENT_KEY);
         if (intitialTitle != null) {
             title.setText(intitialTitle);
         }
@@ -164,8 +190,17 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         } else
             createCommandFragment(initialComment);
 
-        imagesUri = intent.getStringArrayListExtra("pictures");
+        imagesUri = intent.getStringArrayListExtra(PICTURES_KEY);
         setUpImageList();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_todo);
+        setReferenceToViews();
+        setListeners();
+        initializeViewsFromIntent(getIntent());
 
     }
 
