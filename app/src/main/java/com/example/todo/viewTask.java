@@ -10,12 +10,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,15 +66,8 @@ public class viewTask extends AppCompatActivity {
         date = intent.getLongExtra(CREATION_DATE_KEY, -1);
         imagesUri = intent.getStringArrayListExtra(PICTURES_KEY);
 
-        List<Bitmap> images = new ArrayList<Bitmap>();
-        for (String uri : imagesUri) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(uri));
-                images.add(bitmap);
-            } catch (IOException e) { }
-        }
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-        recyclerView.setAdapter(new PictureGalleryAdapter(this, images));
+        recyclerView.setAdapter(new PictureGalleryAdapter(this, imagesUri));
         recyclerView.setLayoutManager(layoutManager);
     }
 
@@ -80,15 +76,8 @@ public class viewTask extends AppCompatActivity {
         commentView.setText(comment);
         creationDate.setText(ViewFormating.dateToString(date));
 
-        List<Bitmap> images = new ArrayList<Bitmap>();
-        for (String uri : imagesUri) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(uri));
-                images.add(bitmap);
-            } catch (IOException e) { }
-        }
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-        recyclerView.setAdapter(new PictureGalleryAdapter(this, images));
+        recyclerView.setAdapter(new PictureGalleryAdapter(this, imagesUri));
         recyclerView.setLayoutManager(layoutManager);
     }
 
@@ -102,6 +91,7 @@ public class viewTask extends AppCompatActivity {
         setUpViews();
         getDataFromIntent(intent);
         setValuesInViews();
+
     }
 
     @Override

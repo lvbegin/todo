@@ -153,19 +153,10 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     }
 
     private void setUpImageList() {
-        images = new ArrayList<Bitmap>();
         if (null == imagesUri)
             imagesUri = new ArrayList<String>();
 
-        for (String uri : imagesUri) {
-            try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(uri));
-                    images.add(bitmap);
-                } catch (IOException e) {
-                }
-        }
-
-        imageAdapter = new PictureGalleryAdapter(this, images);
+        imageAdapter = new PictureGalleryAdapter(this, imagesUri);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
         imagesView.setLayoutManager(layoutManager);
         imagesView.setAdapter(imageAdapter);

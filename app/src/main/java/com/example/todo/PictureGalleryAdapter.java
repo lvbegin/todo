@@ -2,11 +2,17 @@ package com.example.todo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -16,9 +22,15 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Bitmap> images;
 
-    public PictureGalleryAdapter(Context c, List<Bitmap> images) {
+    public PictureGalleryAdapter(Context c, List<String> images) {
         context = c;
-        this.images = images;
+        this.images = new ArrayList();
+        for (String uri : images) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(c.getContentResolver(), Uri.parse(uri));
+                this.images.add(bitmap);
+            } catch (IOException e) { }
+        }
     }
 
     @NonNull
