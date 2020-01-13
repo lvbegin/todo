@@ -1,6 +1,5 @@
 package com.example.todo;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,16 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageSwitcher;
@@ -28,57 +24,6 @@ import android.widget.ViewSwitcher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-class PictureFullSCreenGalleryAdapter extends RecyclerView.Adapter {
-    private Context context;
-    private List<Bitmap> images;
-    private List<String> imagesUri;
-
-    public PictureFullSCreenGalleryAdapter(Context c, List<String> images) {
-        context = c;
-        this.imagesUri = images;
-        this.images = new ArrayList();
-        for (String uri : images) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(c.getContentResolver(), Uri.parse(uri));
-                this.images.add(bitmap);
-            } catch (IOException e) { }
-        }
-    }
-
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.image_fullscreen, viewGroup, false);
-        //(ImageView)viewGroup.findViewById(R.id.imageView);
-        ImageView imageView = layout.findViewById(R.id.imageFullscreenView);
-        imageView.setImageBitmap(images.get(i));
-
-        return new RecyclerView.ViewHolder(layout) {
-            @Override
-            public String toString() {
-                return "image";
-            }
-        };
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        LinearLayout layout = (LinearLayout) viewHolder.itemView;
-        ImageView imageView = layout.findViewById(R.id.imageFullscreenView);
-        imageView.setImageBitmap(images.get(i));
-    }
-
-    @Override
-    public int getItemCount() {
-        return images.size();
-    }
-
-    public void add(Bitmap image)  {
-        images.add(image);
-        notifyDataSetChanged();
-    }
-}
 
 public class ViewPicture extends AppCompatActivity implements GestureDetector.OnGestureListener {
     private RecyclerView listPictures;
@@ -99,15 +44,17 @@ public class ViewPicture extends AppCompatActivity implements GestureDetector.On
         return intent;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_picture);
-
-        imageView = (ImageSwitcher)findViewById(R.id.image_fullscreen);
+    private void retreiveDataFromIntent() {
         currentPictureIndex = getIntent().getExtras().getInt("position");
-        gestureDetector = new GestureDetector(this);
         uris = getIntent().getStringArrayListExtra("pictures");
+    }
+
+    private void initViews() {
+        imageView = (ImageSwitcher)findViewById(R.id.image_fullscreen);
+    }
+
+    private void setUpPictureView() {
+        gestureDetector = new GestureDetector(this);
 
         imageView.setFactory(new ViewSwitcher.ViewFactory() {
 
@@ -117,22 +64,31 @@ public class ViewPicture extends AppCompatActivity implements GestureDetector.On
                 return imageView;
             }
         });
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uris.get(currentPictureIndex)));
-            Drawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-            imageView.setImageDrawable(bitmapDrawable);
-        } catch (IOException e) { }
+        setNewImage(null, null);
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return ViewPicture.this.gestureDetector.onTouchEvent(event);
             }
         });
+    }
 
+    private void initAnimationData() {
         left_to_right_in = AnimationUtils.loadAnimation(this, R.anim.letf_to_right_in_anim);
         left_to_right_out = AnimationUtils.loadAnimation(this, R.anim.left_to_right_out_anim);
         right_to_left_in = AnimationUtils.loadAnimation(this, R.anim.right_to_left_in_anim);
         right_to_left_out = AnimationUtils.loadAnimation(this, R.anim.right_to_left_out_anim);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_picture);
+
+        retreiveDataFromIntent();
+        initViews();
+        setUpPictureView();
+        initAnimationData();
     }
 
     @Override
