@@ -91,7 +91,6 @@ public class viewTask extends AppCompatActivity {
         setUpViews();
         getDataFromIntent(intent);
         setValuesInViews();
-
     }
 
     @Override

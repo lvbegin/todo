@@ -1,6 +1,7 @@
 package com.example.todo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -21,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PictureGalleryAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Bitmap> images;
+    private List<String> imagesUri;
 
     public PictureGalleryAdapter(Context c, List<String> images) {
         context = c;
+        this.imagesUri = images;
         this.images = new ArrayList();
         for (String uri : images) {
             try {
@@ -54,6 +57,14 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
         LinearLayout layout = (LinearLayout) viewHolder.itemView;
         ImageView imageView = layout.findViewById(R.id.imageView);
         imageView.setImageBitmap(Bitmap.createScaledBitmap(images.get(i), 240, 240, false));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TODO", "onClick on a picture" + i);
+                Intent intent = ViewPicture.prepareIntent(PictureGalleryAdapter.this.context, PictureGalleryAdapter.this.imagesUri, i);
+                PictureGalleryAdapter.this.context.startActivity(intent);
+            }
+        });
     }
 
     @Override

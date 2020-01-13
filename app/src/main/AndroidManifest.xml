@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.todo">
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ViewPicture"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -26,7 +28,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".viewTask"></activity>
+        <activity android:name=".viewTask" />
         <activity android:name=".TaskEntryActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
