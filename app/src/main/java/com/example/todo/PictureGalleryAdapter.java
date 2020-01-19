@@ -1,5 +1,6 @@
 package com.example.todo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,20 +21,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PictureGalleryAdapter extends RecyclerView.Adapter {
-    private Context context;
-    private List<Bitmap> images;
+    public static final int REQUEST_CODE = 0xAA;
+    private Activity activity;
     private List<String> imagesUri;
 
-    public PictureGalleryAdapter(Context c, List<String> images) {
-        context = c;
+    public PictureGalleryAdapter(Activity a, List<String> images) {
+        activity = a;
         this.imagesUri = images;
-        this.images = new ArrayList();
-        for (String uri : images) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(c.getContentResolver(), Uri.parse(uri));
-                this.images.add(bitmap);
-            } catch (IOException e) { }
-        }
     }
 
     @NonNull
@@ -42,7 +36,13 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
         LinearLayout layout = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.image, viewGroup, false);
         //(ImageView)viewGroup.findViewById(R.id.imageView);
         ImageView imageView = layout.findViewById(R.id.imageView);
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(images.get(i), 240, 240, false));
+        Bitmap bitmap;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(imagesUri.get(i)));
+        } catch (IOException e) {
+            bitmap = null; //should load default image
+        }
+        imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
 
         return new RecyclerView.ViewHolder(layout) {
             @Override
@@ -56,24 +56,35 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         LinearLayout layout = (LinearLayout) viewHolder.itemView;
         ImageView imageView = layout.findViewById(R.id.imageView);
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(images.get(i), 240, 240, false));
+        Bitmap bitmap;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(imagesUri.get(i)));
+        } catch (IOException e) {
+            bitmap = null; //should load default image
+        }
+        imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TODO", "onClick on a picture" + i);
-                Intent intent = ViewPicture.prepareIntent(PictureGalleryAdapter.this.context, PictureGalleryAdapter.this.imagesUri, i);
-                PictureGalleryAdapter.this.context.startActivity(intent);
+                Intent intent = ViewPicture.prepareIntent(PictureGalleryAdapter.this.activity, PictureGalleryAdapter.this.imagesUri, i);
+                PictureGalleryAdapter.this.activity.startActivityForResult(intent, REQUEST_CODE);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return imagesUri.size();
     }
 
-    public void add(Bitmap image)  {
-        images.add(image);
+    public void add(String uri)  {
+        imagesUri.add(uri);
+        notifyDataSetChanged();
+    }
+
+    public void remove(int index) {
+        imagesUri.remove(index);
         notifyDataSetChanged();
     }
 }

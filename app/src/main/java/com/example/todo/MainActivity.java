@@ -257,8 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     private Intent TaskEToIntent(TaskE t) {
-        List<String> uris = list.getUriPictureArrayList(t);
-        return viewTask.prepareIntent(this, t.tid, t.title, t.comment, t.creationDate, uris);
+        return viewTask.prepareIntent(this, t.tid);
     }
 
     private void updateTask(long id, String title, String comment, boolean checked) {

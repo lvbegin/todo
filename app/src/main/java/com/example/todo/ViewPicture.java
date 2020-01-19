@@ -1,9 +1,11 @@
 package com.example.todo;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -143,6 +145,23 @@ public class ViewPicture extends AppCompatActivity implements GestureDetector.On
     @Override
     public void onLongPress(MotionEvent event) {
         Log.d("TODO", "onLongPress: " + event.toString());
+        new AlertDialog.Builder(this)
+                .setMessage("Delete?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("TODO", "yes pressed!");
+                        Intent intent = new Intent();
+                        intent.putExtra("picture_id", currentPictureIndex);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("TODO", "No pressed!");
+                    }
+                }).create().show();
     }
-
 }

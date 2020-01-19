@@ -24,7 +24,11 @@ public class PersistentTaskList {
     }
 
     public List<TaskPicture> getTaskPictureList(TaskE task) {
-        return db.TaskPictureDAO().getAllAssociatedToTask(task.tid);
+        return getTaskPictureListFromTaskId(task.tid);
+    }
+
+    public List<TaskPicture> getTaskPictureListFromTaskId(long taskId) {
+        return db.TaskPictureDAO().getAllAssociatedToTask(taskId);
     }
 
     public ArrayList<String> getUriPictureArrayList(TaskE task) {
@@ -36,6 +40,7 @@ public class PersistentTaskList {
         return result;
     }
 
+
     public void remove(int index) {
         db.TaskDAO().decrementPositionsFrom(index);
         db.TaskDAO().delete(tasks.get(index));
@@ -44,6 +49,15 @@ public class PersistentTaskList {
             if (t.position > index)
                 t.position --;
         }
+    }
+
+    public void addPicture(long taskId, String imageUri) {
+        db.TaskPictureDAO().insert(new TaskPicture(taskId, imageUri));
+    }
+
+    public void removePicture(long taskId, int pictureIndex) {
+        List<TaskPicture> l = getTaskPictureListFromTaskId(taskId);
+        db.TaskPictureDAO().delete(l.get(pictureIndex));
     }
 
     public void swap(int position, int position1) {

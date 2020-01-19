@@ -50,6 +50,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private List<Bitmap> images;
     private ArrayList<String> imagesUri;
     private PictureGalleryAdapter imageAdapter;
+    private PersistentTaskList db;
 
     static public Intent prepareIntent(Context context, long taskId, String title, String comment, long creationDate, List<String> uris) {
         Intent intent = new Intent();
@@ -189,6 +190,7 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_todo);
+        db = new PersistentTaskList("tododb", getApplicationContext());
         setReferenceToViews();
         setListeners();
         initializeViewsFromIntent(getIntent());
@@ -235,8 +237,9 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
             displayErrorGettingImageMassage();
             return ;
         }
-        imageAdapter.add(image);
-        imagesUri.add(imageUri.toString());
+        imageAdapter.add(imageUri.toString());
+        if (-1 != idTask)
+            db.addPicture(idTask, imageUri.toString());
     }
 
     private void displayErrorGettingImageMassage() {
