@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -30,6 +31,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -60,7 +62,7 @@ public class ExampleInstrumentedTest {
 
     @Rule
     public IntentsTestRule<com.example.todo.MainActivity> intentsRule = new IntentsTestRule<>(com.example.todo.MainActivity.class);
-
+/*
     @Test
     public void createTaskWithoutCommentAndView() {
 
@@ -188,7 +190,7 @@ public class ExampleInstrumentedTest {
                 .perform(click());
         onView(withId(R.id.doneBox)).check(matches(isChecked()));
     }
-
+*/
     private void checkImageDisplayed(int recyclerViewId, int nbImages) {
         Activity currentActivity = intentsRule.getActivity();
         RecyclerView view = (RecyclerView) currentActivity.findViewById(R.id.images);
@@ -222,7 +224,7 @@ public class ExampleInstrumentedTest {
         return  BitmapFactory.decodeResource(intentsRule.getActivity().getResources(), R.mipmap.ic_launcher);
 
     }
-
+/*
     @Test
     public void userCameraToTakeAPhoto() {
         Intent resultData = new Intent();
@@ -230,7 +232,7 @@ public class ExampleInstrumentedTest {
 
         testAddingPicture(intentsRule.getActivity().getString(R.string.camera), resultData);
     }
-
+*/
     @Test
     public void getPictureFromGallery() {
         Resources resources = intentsRule.getActivity().getResources();
@@ -244,6 +246,29 @@ public class ExampleInstrumentedTest {
         resultData.setData(uri);
 
         testAddingPicture(intentsRule.getActivity().getString(R.string.gallery), resultData);
+    }
+
+    @Test
+    public void showPictureFullScreenFromEditTaskAndDelete() {
+        /* picture not deletable. But allows to test GUI flow */
+        getPictureFromGallery();
+        onView(withId(R.id.images))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.image_fullscreen)).perform(longClick());
+        onView(withText("Yes")).perform(click());
+    }
+
+    @Test
+    public void showPictureFullScreenFromViewTaskAndDelete() {
+        /* picture not deletable. But allows to test GUI flow */
+        getPictureFromGallery();
+        onView(withId(R.id.cancel_new_task_button)).perform(click());
+        onView(withId(R.id.listtodo))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.images_to_view))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.image_fullscreen)).perform(longClick());
+        onView(withText("Yes")).perform(click());
     }
 
 }
