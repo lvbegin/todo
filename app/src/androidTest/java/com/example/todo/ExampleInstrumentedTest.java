@@ -86,7 +86,6 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.new_task_button)).perform(click());
         onView(withId(R.id.new_task_title)).perform(typeText("new task"));
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
-        onView(withId(R.id.add_comment_button)).perform(click());
         onView(withId(R.id.comment)).perform(typeText("new comment"));
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
         onView(withId(R.id.done_new_task_button)).perform(click());
@@ -140,7 +139,6 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.new_task_button)).perform(click());
         onView(withId(R.id.new_task_title)).perform(typeText("new task"));
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
-        onView(withId(R.id.add_comment_button)).perform(click());
         onView(withId(R.id.done_new_task_button)).perform(click());
         onView(withId(R.id.listtodo))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -164,7 +162,6 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.new_task_button)).perform(click());
         onView(withId(R.id.new_task_title)).perform(typeText("new task"));
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
-        onView(withId(R.id.add_comment_button)).perform(click());
         onView(withId(R.id.done_new_task_button)).perform(click());
         onView(withId(R.id.listtodo))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));

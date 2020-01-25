@@ -175,12 +175,9 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
 
 
         if (initialComment == null) {
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.fragment, AddCommentFragment.newInstance());
-            transaction.commit();
-        } else
-            createCommandFragment(initialComment);
+            initialComment = "";
+        }
+        createCommandFragment(initialComment);
 
         imagesUri = intent.getStringArrayListExtra(PICTURES_KEY);
         setUpImageList();
