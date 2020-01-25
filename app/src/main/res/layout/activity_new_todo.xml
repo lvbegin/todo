@@ -36,10 +36,12 @@
             android:textColor="@android:color/holo_red_dark"
             android:visibility="invisible" />
 
-        <FrameLayout
-            android:id="@+id/fragment"
+        <EditText
+            android:id="@+id/comment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="Comment"
+            android:maxLines="5" />
 
         <RelativeLayout
             android:layout_width="match_parent"

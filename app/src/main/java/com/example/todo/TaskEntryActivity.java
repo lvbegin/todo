@@ -26,13 +26,10 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TaskEntryActivity extends AppCompatActivity implements AddCommentListener {
+public class TaskEntryActivity extends AppCompatActivity {
     private static final int GALLERY_ACTIVITY = 1;
     private static final int CAMERA_ACTIVITY = 2;
     private static final String TITLE_KEY = "title";
@@ -43,10 +40,10 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     private Button okButton;
     private Button cancelButton;
     private Button addPictureButton;
-    private EditText title;
+    private EditText titleView;
+    private EditText commentView;
     private RecyclerView imagesView;
     private long idTask;
-    private Fragment commentFragment = null;
     private List<Bitmap> images;
     private ArrayList<String> imagesUri;
     private PictureGalleryAdapter imageAdapter;
@@ -80,7 +77,8 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
     }
 
     private void setReferenceToViews() {
-        title = findViewById(R.id.new_task_title);
+        titleView = findViewById(R.id.new_task_title);
+        commentView = findViewById(R.id.comment);
         okButton = findViewById(R.id.done_new_task_button);
         cancelButton = findViewById(R.id.cancel_new_task_button);
         addPictureButton = findViewById(R.id.add_picture_button);
@@ -99,23 +97,20 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String t = title.getText().toString();
+                String t = titleView.getText().toString();
                 if (t.length() == 0) {
                     TextView errorMessage = findViewById(R.id.no_title_error_message);
                     errorMessage.setVisibility(1);
                     Toast.makeText(TaskEntryActivity.this, "Some fields are mandatory", 3).show();
                     return;
                 }
-                String comment;
-                if (commentFragment != null)
-                    comment = ((TextView) commentFragment.getView().findViewById(R.id.comment)).getText().toString();
-                else
-                    comment = null;
+                String comment = commentView.getText().toString();
                 Intent i = new Intent();
                 i.putExtra(TITLE_KEY, t);
                 i.putExtra(COMMENT_KEY, comment);
                 i.putExtra(ID_TASK_KEY, TaskEntryActivity.this.idTask);
                 i.putStringArrayListExtra(PICTURES_KEY, imagesUri);
+                Log.d("TODO", "title:" + t + ", comment: " + comment);
                 setResult(RESULT_OK, i);
                 finish();
             }
@@ -170,15 +165,11 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         intitialTitle = intent.getStringExtra(TITLE_KEY);
         initialComment = intent.getStringExtra(COMMENT_KEY);
         if (intitialTitle != null) {
-            title.setText(intitialTitle);
+            titleView.setText(intitialTitle);
         }
-
-
-        if (initialComment == null) {
-            initialComment = "";
+        if (initialComment != null) {
+            commentView.setText(initialComment);
         }
-        createCommandFragment(initialComment);
-
         imagesUri = intent.getStringArrayListExtra(PICTURES_KEY);
         setUpImageList();
     }
@@ -191,22 +182,6 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         setReferenceToViews();
         setListeners();
         initializeViewsFromIntent(getIntent());
-
-    }
-
-    @Override
-    public void OnAddCommentButtonClick() {
-        if (commentFragment != null)
-            return;
-        createCommandFragment("");
-    }
-
-    private void createCommandFragment(String comment) {
-        commentFragment = commentBox.newInstance(comment);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment, commentFragment);
-        transaction.commit();
     }
 
     private File createImageFile() throws IOException {
@@ -214,7 +189,6 @@ public class TaskEntryActivity extends AppCompatActivity implements AddCommentLi
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     }
 
     private void reactToUpdateTaskTermination(Intent data) {
-        long id = data.getLongExtra("id", -1);
-        updateTask(id, data.getStringExtra("title"), data.getStringExtra("comment"));
+        long id = TaskEntryActivity.idTaskResult(data);
+        updateTask(id, TaskEntryActivity.titleResult(data), TaskEntryActivity.commentResult(data));
         displayTask(MainActivity.this.list.getById(id));
     }
 
@@ -244,16 +244,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             Log.d("TODO", "uri retrieved:" + image);
         }
         addTask(title, comment, imagesUri);
-    }
-
-    private Intent prepareIntent(long taskId, String title, String comment, long creationDate, List<String> uris) {
-        Intent intent = new Intent();
-        intent.putExtra("title", title);
-        intent.putExtra("comment", comment);
-        intent.putExtra("id", taskId);
-        intent.putExtra("creation date", creationDate);
-        intent.putStringArrayListExtra("pictures", new ArrayList<String>(uris));
-        return intent;
     }
 
     private Intent TaskEToIntent(TaskE t) {

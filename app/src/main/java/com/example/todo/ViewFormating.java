@@ -10,7 +10,9 @@ public class ViewFormating {
     }
 
     static String TitleToDisplayTruncated(String title) {
-        if (title.length() <= 23) {
+        if (title == null)
+            return "";
+        else if (title.length() <= 23) {
             return title;
         }
         else
