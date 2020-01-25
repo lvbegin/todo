@@ -62,7 +62,7 @@ public class ExampleInstrumentedTest {
 
     @Rule
     public IntentsTestRule<com.example.todo.MainActivity> intentsRule = new IntentsTestRule<>(com.example.todo.MainActivity.class);
-/*
+
     @Test
     public void createTaskWithoutCommentAndView() {
 
@@ -190,7 +190,7 @@ public class ExampleInstrumentedTest {
                 .perform(click());
         onView(withId(R.id.doneBox)).check(matches(isChecked()));
     }
-*/
+
     private void checkImageDisplayed(int recyclerViewId, int nbImages) {
         Activity currentActivity = intentsRule.getActivity();
         RecyclerView view = (RecyclerView) currentActivity.findViewById(R.id.images);
@@ -224,7 +224,7 @@ public class ExampleInstrumentedTest {
         return  BitmapFactory.decodeResource(intentsRule.getActivity().getResources(), R.mipmap.ic_launcher);
 
     }
-/*
+
     @Test
     public void userCameraToTakeAPhoto() {
         Intent resultData = new Intent();
@@ -232,7 +232,7 @@ public class ExampleInstrumentedTest {
 
         testAddingPicture(intentsRule.getActivity().getString(R.string.camera), resultData);
     }
-*/
+
     @Test
     public void getPictureFromGallery() {
         Resources resources = intentsRule.getActivity().getResources();
@@ -241,6 +241,20 @@ public class ExampleInstrumentedTest {
                 .authority(resources.getResourcePackageName(R.mipmap.ic_launcher))
                 .appendPath(resources.getResourceTypeName(R.mipmap.ic_launcher))
                 .appendPath(resources.getResourceEntryName(R.mipmap.ic_launcher))
+                .build();
+        Intent resultData = new Intent();
+        resultData.setData(uri);
+
+        testAddingPicture(intentsRule.getActivity().getString(R.string.gallery), resultData);
+    }
+
+    @Test
+    public void getPictureWithWrongURIFromGallery() {
+        Resources resources = intentsRule.getActivity().getResources();
+        Uri uri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(resources.getResourcePackageName(R.mipmap.ic_launcher))
+                .appendPath(resources.getResourceTypeName(R.mipmap.ic_launcher))
                 .build();
         Intent resultData = new Intent();
         resultData.setData(uri);

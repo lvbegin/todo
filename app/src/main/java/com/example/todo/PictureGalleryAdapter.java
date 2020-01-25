@@ -62,7 +62,10 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
         } catch (IOException e) {
             bitmap = null; //should load default image
         }
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
+        if (null != bitmap)
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
+        else
+            imageView.setImageResource(R.drawable.ic_launcher_foreground);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
