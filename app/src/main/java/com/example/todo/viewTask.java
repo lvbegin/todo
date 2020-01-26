@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,11 +25,13 @@ public class viewTask extends AppCompatActivity {
     private static final String PICTURES_KEY = "pictures";
     private TextView titleView;
     private TextView commentView;
-    private TextView creationDate;
+    private TextView creationDateView;
+    private TextView doneView;
     private long id;
     private String title;
     private String comment;
     private long date;
+    private boolean done;
     private List<String> imagesUri;
     private RecyclerView recyclerView;
     private PersistentTaskList list;
@@ -46,7 +47,8 @@ public class viewTask extends AppCompatActivity {
     private void setUpViews() {
         titleView = findViewById(R.id.titleViewTask);
         commentView = findViewById(R.id.commentViewTask);
-        creationDate = findViewById(R.id.CreationDateViewTask);
+        creationDateView = findViewById(R.id.CreationDateViewTask);
+        doneView = findViewById(R.id.DoneViewTask);
         recyclerView = findViewById(R.id.images_to_view);
     }
 
@@ -56,15 +58,18 @@ public class viewTask extends AppCompatActivity {
         title = task.title;
         comment = task.comment;
         date = task.creationDate;
+        done = task.done;
         imagesUri = list.getUriPictureArrayList(task);
     }
 
     private void setValuesInViews() {
         titleView.setText(title);
         commentView.setText(comment);
-        creationDate.setText(ViewFormating.dateToString(date));
-        creationDate.setText(ViewFormating.dateToString(date));
-
+        creationDateView.setText(ViewFormating.dateToString(date));
+        if (done)
+            doneView.setText(R.string.yes);
+        else
+            doneView.setText(R.string.no);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
         adapter = new PictureGalleryAdapter(this, imagesUri);
