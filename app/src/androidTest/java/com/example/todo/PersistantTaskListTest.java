@@ -70,9 +70,9 @@ public class PersistantTaskListTest {
         dummyListUri3.add("dummy uri 3");
 
         assert (l.isEmpty());
-        list.add(title1, comment1, date1, dummyListUri1);
-        list.add(title2, comment2, date2, dummyListUri2);
-        list.add(title3, comment3, date3, dummyListUri3);
+        list.add(title1, comment1, date1, dummyListUri1, false);
+        list.add(title2, comment2, date2, dummyListUri2, false);
+        list.add(title3, comment3, date3, dummyListUri3, false);
         assertEquals(3, l.size());
         assertEquals(title1, l.get(0).title);
         assertEquals(date1, l.get(0).creationDate);
@@ -151,7 +151,7 @@ public class PersistantTaskListTest {
         dummyListUri.add(dummyUri2);
 
         assert (l.isEmpty());
-        list.add(title, comment, date, dummyListUri);
+        list.add(title, comment, date, dummyListUri, false);
         l = list.getList();
         assertEquals(1, l.size());
         List<TaskPicture> taskPictures = list.getTaskPictureList(l.get(0));
@@ -172,7 +172,7 @@ public class PersistantTaskListTest {
         dummyListUri.add(dummyUri2);
 
         assert (l.isEmpty());
-        list.add(title, comment, date, dummyListUri);
+        list.add(title, comment, date, dummyListUri, false);
         l = list.getList();
         assertEquals(1, l.size());
         TaskE t = l.get(0);
