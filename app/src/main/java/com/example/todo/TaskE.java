@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey;
 @Entity
 public class TaskE {
 
-    public TaskE(String title, String comment, long creationDate, int position) {
+    public TaskE(String title, String comment, long creationDate, int position, boolean done) {
         this.title = title;
         this.comment = comment;
         this.creationDate = creationDate;
         this.position = position;
-        this.done = false;
+        this.done = done;
     }
 
     @PrimaryKey(autoGenerate = true)

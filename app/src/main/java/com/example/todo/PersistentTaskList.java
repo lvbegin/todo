@@ -69,8 +69,8 @@ public class PersistentTaskList {
         Collections.swap(tasks, position, position1);
     }
 
-    public void add(String title, String comment, long date, List<String> imagesUri) {
-        TaskE newTask = new TaskE(title, comment, date, tasks.size());
+    public void add(String title, String comment, long date, List<String> imagesUri, boolean done) {
+        TaskE newTask = new TaskE(title, comment, date, tasks.size(), done);
         tasks.add(newTask);
         newTask.tid = db.TaskDAO().insert(newTask);
         for (String uri: imagesUri) {

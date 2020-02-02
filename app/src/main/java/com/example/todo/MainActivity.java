@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         /* should dispatch depending on requestCode */
         if (resultCode == RESULT_CANCELED)
             return ;
-
         switch (requestCode) {
             case 1:
                 reactToNewTaskTermination(data);
@@ -215,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
             case 1:
                 TaskE t = list.getById(data.getLongExtra("id", -1));
                 List<String> uris  = list.getUriPictureArrayList(t);
-                Intent intent = TaskEntryActivity.prepareIntent(this, t.tid, t.title, t.comment, t.creationDate, uris);
+                Intent intent = TaskEntryActivity.prepareIntent(this, t.tid, t.title, t.comment, t.creationDate, uris, t.done);
                 startActivityForResult(intent, 3);
                 break;
             case 2:
@@ -230,18 +229,19 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
 
     private void reactToUpdateTaskTermination(Intent data) {
         long id = TaskEntryActivity.idTaskResult(data);
-        updateTask(id, TaskEntryActivity.titleResult(data), TaskEntryActivity.commentResult(data));
+        updateTask(id, TaskEntryActivity.titleResult(data), TaskEntryActivity.commentResult(data), TaskEntryActivity.doneResult(data));
         displayTask(MainActivity.this.list.getById(id));
     }
 
     private void reactToNewTaskTermination(Intent data) {
         String title = TaskEntryActivity.titleResult(data);
         String comment = TaskEntryActivity.commentResult(data);
+        boolean done = TaskEntryActivity.doneResult(data);
         List<String> imagesUri = TaskEntryActivity.listImageUri(data);
         for (String image : imagesUri) {
             Log.d("TODO", "uri retrieved:" + image);
         }
-        addTask(title, comment, imagesUri);
+        addTask(title, comment, imagesUri, done);
     }
 
     private Intent TaskEToIntent(TaskE t) {
@@ -252,15 +252,10 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         list.update(id, title, comment, checked);
     }
 
-    private void updateTask(long id, String title, String comment) {
-        list.update(id, title, comment);
-        adapter.notifyItemChanged(list.idToIndex(id));
-    }
-
-    private void addTask(String title, String comment, List<String> imagesUri) {
+    private void addTask(String title, String comment, List<String> imagesUri, boolean done) {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
-        list.add(title, comment, date, imagesUri);
+        list.add(title, comment, date, imagesUri, done);
         adapter.notifyDataSetChanged();
     }
 }

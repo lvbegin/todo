@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class TaskEntryActivity extends AppCompatActivity {
     private static final String ID_TASK_KEY = "id";
     private static final String CREATION_DATE_KEY = "creation_date";
     private static final String PICTURES_KEY = "pictures";
+    private static final String DONE_KEY = "done";
     private Button okButton;
     private Button cancelButton;
     private Button addPictureButton;
@@ -48,13 +50,15 @@ public class TaskEntryActivity extends AppCompatActivity {
     private ArrayList<String> imagesUri;
     private PictureGalleryAdapter imageAdapter;
     private PersistentTaskList db;
+    private CheckBox checkBox;
 
-    static public Intent prepareIntent(Context context, long taskId, String title, String comment, long creationDate, List<String> uris) {
+    static public Intent prepareIntent(Context context, long taskId, String title, String comment, long creationDate, List<String> uris, boolean done) {
         Intent intent = new Intent();
         intent.putExtra(TITLE_KEY, title);
         intent.putExtra(COMMENT_KEY, comment);
         intent.putExtra(ID_TASK_KEY, taskId);
         intent.putExtra(CREATION_DATE_KEY, creationDate);
+        intent.putExtra(DONE_KEY, done);
         intent.putStringArrayListExtra(PICTURES_KEY, new ArrayList<String>(uris));
         intent.setClass(context, TaskEntryActivity.class);
         return intent;
@@ -76,6 +80,10 @@ public class TaskEntryActivity extends AppCompatActivity {
         return intent.getExtras().getStringArrayList(PICTURES_KEY);
     }
 
+    static public boolean doneResult(Intent intent) {
+        return intent.getExtras().getBoolean(DONE_KEY);
+    }
+
     private void setReferenceToViews() {
         titleView = findViewById(R.id.new_task_title);
         commentView = findViewById(R.id.comment);
@@ -83,6 +91,7 @@ public class TaskEntryActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancel_new_task_button);
         addPictureButton = findViewById(R.id.add_picture_button);
         imagesView = findViewById(R.id.images);
+        checkBox = findViewById(R.id.CheckBoxEditTask);
     }
 
     private void setListeners() {
@@ -105,9 +114,11 @@ public class TaskEntryActivity extends AppCompatActivity {
                     return;
                 }
                 String comment = commentView.getText().toString();
+                boolean done = checkBox.isChecked();
                 Intent i = new Intent();
                 i.putExtra(TITLE_KEY, t);
                 i.putExtra(COMMENT_KEY, comment);
+                i.putExtra(DONE_KEY, done);
                 i.putExtra(ID_TASK_KEY, TaskEntryActivity.this.idTask);
                 i.putStringArrayListExtra(PICTURES_KEY, imagesUri);
                 Log.d("TODO", "title:" + t + ", comment: " + comment);
@@ -161,6 +172,7 @@ public class TaskEntryActivity extends AppCompatActivity {
     private void initializeViewsFromIntent(Intent intent) {
         String intitialTitle = null;
         String initialComment = null;
+        boolean initialDone = intent.getBooleanExtra(DONE_KEY, false);
         idTask = intent.getLongExtra(ID_TASK_KEY, -1);
         intitialTitle = intent.getStringExtra(TITLE_KEY);
         initialComment = intent.getStringExtra(COMMENT_KEY);
@@ -170,6 +182,7 @@ public class TaskEntryActivity extends AppCompatActivity {
         if (initialComment != null) {
             commentView.setText(initialComment);
         }
+        checkBox.setChecked(initialDone);
         imagesUri = intent.getStringArrayListExtra(PICTURES_KEY);
         setUpImageList();
     }
