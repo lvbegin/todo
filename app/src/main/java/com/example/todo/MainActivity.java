@@ -256,6 +256,11 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         long date = new Date().getTime();
         Toast.makeText(MainActivity.this, "task added", 3).show();
         list.add(title, comment, date, imagesUri, done);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         adapter.notifyDataSetChanged();
     }
 }
