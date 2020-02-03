@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ViewSwitcher;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
