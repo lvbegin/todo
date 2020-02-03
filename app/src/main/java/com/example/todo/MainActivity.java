@@ -191,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        /* should dispatch depending on requestCode */
         if (resultCode == RESULT_CANCELED)
             return ;
         switch (requestCode) {
