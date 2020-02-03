@@ -100,12 +100,10 @@ public class ViewPicture extends AppCompatActivity implements GestureDetector.On
     }
 
     private void setNewImage(Animation in, Animation out) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uris.get(currentPictureIndex)));
-            imageView.setInAnimation(in);
-            imageView.setOutAnimation(out);
-            imageView.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
-        } catch (IOException e) { }
+        Bitmap bitmap = TaskBitmap.getBitmapOrDefault(Uri.parse(uris.get(currentPictureIndex)), this);
+        imageView.setInAnimation(in);
+        imageView.setOutAnimation(out);
+        imageView.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }
 
     @Override

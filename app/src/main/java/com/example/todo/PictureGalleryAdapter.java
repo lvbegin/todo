@@ -1,11 +1,9 @@
 package com.example.todo;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -34,14 +30,8 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LinearLayout layout = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.image, viewGroup, false);
-        //(ImageView)viewGroup.findViewById(R.id.imageView);
         ImageView imageView = layout.findViewById(R.id.imageView);
-        Bitmap bitmap;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(imagesUri.get(i)));
-        } catch (IOException e) {
-            bitmap = null; //should load default image
-        }
+        Bitmap bitmap = TaskBitmap.getBitmapOrDefault(Uri.parse(imagesUri.get(i)), activity);
         imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
 
         return new RecyclerView.ViewHolder(layout) {
@@ -56,16 +46,8 @@ public class PictureGalleryAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         LinearLayout layout = (LinearLayout) viewHolder.itemView;
         ImageView imageView = layout.findViewById(R.id.imageView);
-        Bitmap bitmap;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(imagesUri.get(i)));
-        } catch (IOException e) {
-            bitmap = null; //should load default image
-        }
-        if (null != bitmap)
-            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
-        else
-            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+        Bitmap bitmap = TaskBitmap.getBitmapOrDefault(Uri.parse(imagesUri.get(i)), activity);
+        imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 240, 240, false));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
