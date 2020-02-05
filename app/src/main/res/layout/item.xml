@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemLayout"
@@ -11,19 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/dateHint"
-            android:layout_width="wrap_content"
-            android:layout_height="14dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="12dp"
-            android:layout_weight="1"
-            android:text="Created:"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/itemDate"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/itemText"
@@ -38,12 +27,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/dateHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Created:"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/itemDate"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.764" />
+
+        <TextView
             android:id="@+id/itemDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="TextView"
-            android:textAlignment="viewEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -54,7 +58,7 @@
         <CheckBox
             android:id="@+id/doneBox"
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Done"
             app:layout_constraintBottom_toTopOf="@+id/dateHint"
