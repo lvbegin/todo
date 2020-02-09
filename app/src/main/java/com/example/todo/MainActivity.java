@@ -1,6 +1,9 @@
 package com.example.todo;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,9 +20,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +54,12 @@ class MyViewHolder extends RecyclerView.ViewHolder {
         checkBox.setChecked(checked);
     }
 
+    public void setImage(Bitmap bitmap) {
+        ImageView imageView = this.itemView.findViewById(R.id.firstImage);
+        imageView.setImageBitmap(bitmap);
+    }
+
+
     public void setListeners(final OnClickItem onClick, int itemIndex)
     {
         this.itemView.setOnClickListener(new View.OnClickListener() {
@@ -71,11 +82,15 @@ class MyViewHolder extends RecyclerView.ViewHolder {
 class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private List<TaskE> tasks;
     private OnClickItem onClickItem;
+    private PersistentTaskList list;
+    private Activity activity;
 
-    public MyAdapter(List<TaskE> tasks, OnClickItem onClickItem) {
+    public MyAdapter(List<TaskE> tasks, OnClickItem onClickItem, PersistentTaskList list, Activity activity) {
         super();
         this.tasks = tasks;
         this.onClickItem = onClickItem;
+        this.list = list;
+        this.activity = activity;
     }
 
     @Override
@@ -89,6 +104,11 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         viewHolder.setTitle(tasks.get(i).title);
         viewHolder.setDate(tasks.get(i).creationDate);
         viewHolder.setChecked(tasks.get(i).done);
+        ArrayList<String> listUri = list.getUriPictureArrayList(tasks.get(i));
+        if (listUri.size() > 0) {
+            Bitmap bitmap = TaskBitmap.getBitmapOrDefault(Uri.parse(listUri.get(0)), activity);
+            viewHolder.setImage(bitmap);
+        }
         viewHolder.setListeners(MyAdapter.this.onClickItem, i);
     }
 
@@ -115,10 +135,10 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
 
         list = new PersistentTaskList("tododb", getApplicationContext());
 
-        adapter = new MyAdapter(list.getList(), this);
+        adapter = new MyAdapter(list.getList(), this, list, this);
         RecyclerView listToDo = (RecyclerView)findViewById(R.id.listtodo);
         listToDo.setLayoutManager(new LinearLayoutManager(this));
-        listToDo.setAdapter( adapter);
+        listToDo.setAdapter(adapter);
         listToDo.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         newButton = findViewById(R.id.new_task_button);
