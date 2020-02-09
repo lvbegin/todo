@@ -7,7 +7,11 @@
     <string name="dekete_item">Delete</string>
     <string name="gallery">Gallery</string>
     <string name="camera">Camera</string>
-    <string name="problem_getting_image">sorry, problem getting picture</string>
+    <string name="problem_getting_image">Sorry, problem getting picture</string>
+    <string name="choose_select_picture">Select a picture</string>
+    <string name="choose_take_picture">Take a picture</string>
+    <string name="select_picture_title">Where the picture is from?</string>
+    <string name="field_mandatory_message">Some fields are mandatory</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

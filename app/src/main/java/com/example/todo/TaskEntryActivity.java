@@ -110,7 +110,7 @@ public class TaskEntryActivity extends AppCompatActivity {
                 if (t.length() == 0) {
                     TextView errorMessage = findViewById(R.id.no_title_error_message);
                     errorMessage.setVisibility(1);
-                    Toast.makeText(TaskEntryActivity.this, "Some fields are mandatory", 3).show();
+                    Toast.makeText(TaskEntryActivity.this, R.string.field_mandatory_message, 3).show();
                     return;
                 }
                 String comment = commentView.getText().toString();
@@ -131,7 +131,7 @@ public class TaskEntryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("TODO", "onClick: ");
-                new AlertDialog.Builder(TaskEntryActivity.this).setTitle("Where the picture is from?")
+                new AlertDialog.Builder(TaskEntryActivity.this).setTitle(R.string.select_picture_title)
                         .setItems(R.array.picture_array, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -141,11 +141,11 @@ public class TaskEntryActivity extends AppCompatActivity {
                                         Intent intent = new Intent();
                                         intent.setType("image/*");
                                         intent.setAction(Intent.ACTION_GET_CONTENT);
-                                        startActivityForResult(Intent.createChooser(intent, "Select a picture"), GALLERY_ACTIVITY);
+                                        startActivityForResult(Intent.createChooser(intent, getResources().getText(R.string.choose_select_picture)), GALLERY_ACTIVITY);
                                         break;
                                     case 1:
                                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        startActivityForResult(Intent.createChooser(takePictureIntent, "Take a picture"), CAMERA_ACTIVITY);
+                                        startActivityForResult(Intent.createChooser(takePictureIntent, getResources().getText(R.string.choose_take_picture)), CAMERA_ACTIVITY);
                                         break;
                                     default:
                                         Log.d("TODO", "onClick: " + " unknown item selected");
