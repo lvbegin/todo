@@ -18,8 +18,8 @@ public class ExampleUnitTest {
 
     @Test
     public void title_too_long_is_truncated() {
-        final String title = "This is a too long title";
-        final String formattedtitle = "This is a too long t...";
+        final String title = "This is a too long title!!!!! This is a too long title";
+        final String formattedtitle = "This is a too long title!!!!! This is a too long t...";
         assertEquals(formattedtitle, ViewFormating.TitleToDisplayTruncated(title));
     }
 }
