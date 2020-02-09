@@ -141,14 +141,12 @@ public class TaskEntryActivity extends AppCompatActivity {
                                         Intent intent = new Intent();
                                         intent.setType("image/*");
                                         intent.setAction(Intent.ACTION_GET_CONTENT);
-                                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_ACTIVITY);
+                                        startActivityForResult(Intent.createChooser(intent, "Select a picture"), GALLERY_ACTIVITY);
                                         break;
                                     case 1:
                                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                            startActivityForResult(takePictureIntent, CAMERA_ACTIVITY);
-                                        }
-
+                                        startActivityForResult(Intent.createChooser(takePictureIntent, "Take a picture"), CAMERA_ACTIVITY);
+                                        break;
                                     default:
                                         Log.d("TODO", "onClick: " + " unknown item selected");
                                 }
