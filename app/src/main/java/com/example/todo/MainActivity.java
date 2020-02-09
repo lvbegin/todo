@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        list = new PersistentTaskList("tododb", getApplicationContext());
+        list = new PersistentTaskList(getResources().getString(R.string.db_name), getApplicationContext());
 
         adapter = new MyAdapter(list.getList(), this, list, this);
         RecyclerView listToDo = (RecyclerView)findViewById(R.id.listtodo);

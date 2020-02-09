@@ -189,7 +189,7 @@ public class TaskEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_todo);
-        db = new PersistentTaskList("tododb", getApplicationContext());
+        db = new PersistentTaskList(getResources().getString(R.string.db_name), getApplicationContext());
         setReferenceToViews();
         setListeners();
         initializeViewsFromIntent(getIntent());

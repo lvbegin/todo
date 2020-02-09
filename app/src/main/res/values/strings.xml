@@ -12,6 +12,7 @@
     <string name="choose_take_picture">Take a picture</string>
     <string name="select_picture_title">Where the picture is from?</string>
     <string name="field_mandatory_message">Some fields are mandatory</string>
+    <string name="db_name">tododb</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

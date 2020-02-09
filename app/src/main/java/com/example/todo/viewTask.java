@@ -84,7 +84,7 @@ public class viewTask extends AppCompatActivity {
         setContentView(R.layout.activity_view_task);
         Log.d("LOLO", "start view activity");
 
-        list = new PersistentTaskList("tododb", getApplicationContext());
+        list = new PersistentTaskList(getResources().getString(R.string.db_name), getApplicationContext());
 
         Intent intent = getIntent();
         setUpViews();
