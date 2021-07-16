@@ -5,8 +5,10 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import androidx.room.Room;
 
@@ -33,22 +35,14 @@ public class PersistentTaskList {
 
     public ArrayList<String> getUriPictureArrayList(TaskE task) {
         List<TaskPicture> l  = db.TaskPictureDAO().getAllAssociatedToTask(task.tid);
-        ArrayList<String> result = new ArrayList();
-        for (TaskPicture taskPicture : l) {
-            result.add(taskPicture.uri);
-        }
-        return result;
+        return new ArrayList<>(Arrays.asList(l.stream().map(t-> t.uri).toArray(size -> new String[size])));
     }
-
 
     public void remove(int index) {
         db.TaskDAO().decrementPositionsFrom(index);
         db.TaskDAO().delete(tasks.get(index));
         tasks.remove(index);
-        for (TaskE t: tasks) {
-            if (t.position > index)
-                t.position --;
-        }
+        tasks.stream().filter( t -> t.position > index).forEach(t-> t.position--);
     }
 
     public void addPicture(long taskId, String imageUri) {
@@ -73,19 +67,12 @@ public class PersistentTaskList {
         TaskE newTask = new TaskE(title, comment, date, tasks.size(), done);
         tasks.add(newTask);
         newTask.tid = db.TaskDAO().insert(newTask);
-        for (String uri: imagesUri) {
-            Log.d("TOTO", "inserting uri in db: " + uri);
-            db.TaskPictureDAO().insert(new TaskPicture(newTask.tid, uri));
-        }
+        imagesUri.stream().forEach( uri -> db.TaskPictureDAO().insert(new TaskPicture(newTask.tid, uri)));
     }
 
     public int idToIndex(long id) {
-        for(int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).tid == id)
-                return i;
-        }
-        return -1;
-    }
+        return IntStream.range(0, tasks.size()).filter(i-> tasks.get(i).tid == id).findAny().orElse(-1);
+   }
 
     public TaskE getById(long id) {
         int index = idToIndex((id));

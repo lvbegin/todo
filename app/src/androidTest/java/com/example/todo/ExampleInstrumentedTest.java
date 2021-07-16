@@ -147,8 +147,8 @@ public class ExampleInstrumentedTest {
         onView(withText(R.string.edit_item)).perform(click());
 
         onView(withId(R.id.comment)).perform(typeText("new comment"));
-        onView(withId(R.id.CheckBoxEditTask)).perform(click());
         onView(withId(R.id.new_task_title)).perform(closeSoftKeyboard());
+        onView(withId(R.id.CheckBoxEditTask)).perform(click());
         onView(withId(R.id.done_new_task_button)).perform(click());
         onView(withId(R.id.titleViewTask)).check(matches(withText("new task")));
         onView(withId(R.id.commentViewTask)).check(matches(withText("new comment")));

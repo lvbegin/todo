@@ -257,9 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnClickItem {
         String comment = TaskEntryActivity.commentResult(data);
         boolean done = TaskEntryActivity.doneResult(data);
         List<String> imagesUri = TaskEntryActivity.listImageUri(data);
-        for (String image : imagesUri) {
-            Log.d("TODO", "uri retrieved:" + image);
-        }
+        imagesUri.stream().forEach( image -> Log.d("TODO", "uri retrieved:" + image));
         addTask(title, comment, imagesUri, done);
     }
 
